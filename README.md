@@ -105,32 +105,32 @@ Integrate across valid samples; do not silently count long telemetry gaps as con
 
 ## Hardware components
 
-| Component | Quantity | Purpose / selection notes |
-| --- | --- | --- |
-| ESP32 development board | 1 | Pulse counting, local detection/control, Wi-Fi telemetry |
-| Water flow sensors | 2 | Inlet and outlet measurement; match pipe size, pressure, and flow range |
-| Solenoid water valve | 1 | Automatic cutoff; verify voltage, current, pressure rating, and default state |
-| Compatible relay module or MOSFET driver | 1 | Switch the valve load without powering it from a GPIO |
-| Buzzer and driver if required | 1 | Local audible alert |
-| Suitable power supply / regulator | As required | Supply the ESP32, valve, and sensors at their specified ratings |
-| Tubing, fittings, connectors, enclosure | As required | Build the monitored pipe section and protect electronics |
-| USB data cable | 1 | Firmware upload and serial debugging |
-| Level shifting / pull-ups / inductive protection | As required | Match signal levels and protect the control circuit |
+| Component                                        | Quantity    | Purpose / selection notes                                                     |
+| ------------------------------------------------ | ----------- | ----------------------------------------------------------------------------- |
+| ESP32 development board                          | 1           | Pulse counting, local detection/control, Wi-Fi telemetry                      |
+| Water flow sensors                               | 2           | Inlet and outlet measurement; match pipe size, pressure, and flow range       |
+| Solenoid water valve                             | 1           | Automatic cutoff; verify voltage, current, pressure rating, and default state |
+| Compatible relay module or MOSFET driver         | 1           | Switch the valve load without powering it from a GPIO                         |
+| Buzzer and driver if required                    | 1           | Local audible alert                                                           |
+| Suitable power supply / regulator                | As required | Supply the ESP32, valve, and sensors at their specified ratings               |
+| Tubing, fittings, connectors, enclosure          | As required | Build the monitored pipe section and protect electronics                      |
+| USB data cable                                   | 1           | Firmware upload and serial debugging                                          |
+| Level shifting / pull-ups / inductive protection | As required | Match signal levels and protect the control circuit                           |
 
 Exact sensor models, GPIO assignments, pulse calibration constants, valve polarity, and wiring are **project-specific placeholders**. Verify component datasheets. ESP32 inputs require compatible logic levels; do not connect a higher-voltage sensor output directly. Use appropriate protection for an inductive valve load. Document whether the valve is normally open or normally closed and what happens on power loss.
 
 ## Software stack
 
-| Layer | Technologies |
-| --- | --- |
-| Frontend | React, Vite, TypeScript, Tailwind CSS |
-| Frontend networking | Axios, Socket.IO Client |
-| Charts | Recharts |
-| Backend | Node.js, Express, TypeScript, Socket.IO |
-| Authentication / validation | JWT, bcrypt, Zod |
-| Database | PostgreSQL |
-| Local database runtime | Docker with Docker Compose |
-| Firmware | ESP32, Arduino framework, C++ |
+| Layer                       | Technologies                            |
+| --------------------------- | --------------------------------------- |
+| Frontend                    | React, Vite, TypeScript, Tailwind CSS   |
+| Frontend networking         | Axios, Socket.IO Client                 |
+| Charts                      | Recharts                                |
+| Backend                     | Node.js, Express, TypeScript, Socket.IO |
+| Authentication / validation | JWT, bcrypt, Zod                        |
+| Database                    | PostgreSQL                              |
+| Local database runtime      | Docker with Docker Compose              |
+| Firmware                    | ESP32, Arduino framework, C++           |
 
 Use dependency versions from the repository manifests and lockfiles. The database driver, migration tool, test runner, and optional firmware JSON library have not been confirmed.
 
@@ -231,14 +231,14 @@ JWT_EXPIRES_IN=1d
 CORS_ORIGIN=http://localhost:5173
 ```
 
-| Variable | Purpose |
-| --- | --- |
-| `PORT` | Example backend HTTP and Socket.IO port |
-| `HOST` | Example listen address; firmware needs a server reachable on the LAN |
-| `DATABASE_URL` | PostgreSQL connection string; URL-encode special characters in credentials |
-| `JWT_SECRET` | Secret used for signing/verifying tokens in an HMAC-based JWT implementation |
+| Variable         | Purpose                                                                        |
+| ---------------- | ------------------------------------------------------------------------------ |
+| `PORT`           | Example backend HTTP and Socket.IO port                                        |
+| `HOST`           | Example listen address; firmware needs a server reachable on the LAN           |
+| `DATABASE_URL`   | PostgreSQL connection string; URL-encode special characters in credentials     |
+| `JWT_SECRET`     | Secret used for signing/verifying tokens in an HMAC-based JWT implementation   |
 | `JWT_EXPIRES_IN` | Example token lifetime, if supported by the selected JWT library/configuration |
-| `CORS_ORIGIN` | Allowed dashboard origin; configure HTTP and Socket.IO consistently |
+| `CORS_ORIGIN`    | Allowed dashboard origin; configure HTTP and Socket.IO consistently            |
 
 Generate a random secret using Node.js:
 
@@ -347,14 +347,14 @@ Creating the database does **not** create application tables. Use the repository
 
 **Proposed logical entities:**
 
-| Entity | Intended data |
-| --- | --- |
-| Users | ID, name, unique email, password hash, timestamps |
-| Devices | Owner, name/location, device credential hash, active state, last seen |
-| Telemetry | Device, observation/receipt timestamps, flow readings, reported leak and valve states |
-| Leak events | Device, incident start, cutoff/resolution times, leakage estimate, savings assumptions |
-| Notifications | User/device/event association, notification type, read state |
-| Preferences | Only implemented account and notification preferences |
+| Entity        | Intended data                                                                          |
+| ------------- | -------------------------------------------------------------------------------------- |
+| Users         | ID, name, unique email, password hash, timestamps                                      |
+| Devices       | Owner, name/location, device credential hash, active state, last seen                  |
+| Telemetry     | Device, observation/receipt timestamps, flow readings, reported leak and valve states  |
+| Leak events   | Device, incident start, cutoff/resolution times, leakage estimate, savings assumptions |
+| Notifications | User/device/event association, notification type, read state                           |
+| Preferences   | Only implemented account and notification preferences                                  |
 
 Actual names, columns, constraints, and relationships must come from migrations. Use ownership checks, foreign keys, and an index appropriate for device/time-range queries. Ordinary PostgreSQL timestamped tables can store time-series readings; a time-series extension is not assumed.
 
@@ -484,22 +484,22 @@ Values are illustrative, not measurements or threshold defaults. Store server re
 
 **All routes below are proposed documentation placeholders, not verified endpoints.** Replace them with the actual router paths, request schemas, and response formats. The example base URL is `http://localhost:5000/api`.
 
-| Method | Example route | Purpose | Expected authentication |
-| --- | --- | --- | --- |
-| GET | `/health` | Service health; document whether DB health is checked | As implemented |
-| POST | `/auth/register` | Create account, if self-registration is enabled | Public with validation/rate limits |
-| POST | `/auth/login` | Authenticate and issue session/token | Public with validation/rate limits |
-| GET | `/users/me` | Current profile | User JWT/session |
-| PATCH | `/users/me` | Update profile | User JWT/session |
-| POST | `/users/me/password` | Change password | User JWT/session and current-password verification |
-| GET / POST | `/devices` | List owned devices / register device | User JWT/session |
-| GET / PATCH | `/devices/:deviceId` | Read/update owned device metadata | User JWT/session |
-| POST | `/telemetry` | Receive validated sensor telemetry | Device credential |
-| GET | `/devices/:deviceId/telemetry` | Time-filtered reading history | User JWT/session + ownership |
-| GET | `/devices/:deviceId/leaks` | Leak-event history | User JWT/session + ownership |
-| GET | `/devices/:deviceId/analytics` | Usage, loss, estimated savings | User JWT/session + ownership |
-| GET | `/notifications` | User notification history | User JWT/session |
-| PATCH | `/notifications/:notificationId` | Mark owned notification read | User JWT/session |
+| Method      | Example route                    | Purpose                                               | Expected authentication                            |
+| ----------- | -------------------------------- | ----------------------------------------------------- | -------------------------------------------------- |
+| GET         | `/health`                        | Service health; document whether DB health is checked | As implemented                                     |
+| POST        | `/auth/register`                 | Create account, if self-registration is enabled       | Public with validation/rate limits                 |
+| POST        | `/auth/login`                    | Authenticate and issue session/token                  | Public with validation/rate limits                 |
+| GET         | `/users/me`                      | Current profile                                       | User JWT/session                                   |
+| PATCH       | `/users/me`                      | Update profile                                        | User JWT/session                                   |
+| POST        | `/users/me/password`             | Change password                                       | User JWT/session and current-password verification |
+| GET / POST  | `/devices`                       | List owned devices / register device                  | User JWT/session                                   |
+| GET / PATCH | `/devices/:deviceId`             | Read/update owned device metadata                     | User JWT/session                                   |
+| POST        | `/telemetry`                     | Receive validated sensor telemetry                    | Device credential                                  |
+| GET         | `/devices/:deviceId/telemetry`   | Time-filtered reading history                         | User JWT/session + ownership                       |
+| GET         | `/devices/:deviceId/leaks`       | Leak-event history                                    | User JWT/session + ownership                       |
+| GET         | `/devices/:deviceId/analytics`   | Usage, loss, estimated savings                        | User JWT/session + ownership                       |
+| GET         | `/notifications`                 | User notification history                             | User JWT/session                                   |
+| PATCH       | `/notifications/:notificationId` | Mark owned notification read                          | User JWT/session                                   |
 
 For a bearer-token design, user requests carry `Authorization: Bearer <USER_JWT>`. An example device mechanism is `X-Device-Key: <DEVICE_KEY>`; use it only if implemented by the backend. Device keys must be bound to the registered device and cannot be replaced by a client-supplied `deviceId` alone. Never send a user's password with telemetry.
 
@@ -511,16 +511,16 @@ No remote valve-control route is assumed. Remote control requires a separate aut
 
 **Proposed event names and payload contents — replace with actual server/client contracts:**
 
-| Direction | Example event | Intended contents |
-| --- | --- | --- |
-| Client → server | `device:subscribe` | Device ID; server verifies ownership before joining a room |
-| Client → server | `device:unsubscribe` | Device ID to leave |
-| Server → client | `telemetry:update` | Device ID, timestamp, inlet/outlet readings, reported states |
-| Server → client | `leak:detected` | Stable incident ID, device ID, detection time |
-| Server → client | `valve:updated` | Device ID, command/state, timestamp, confirmation source |
-| Server → client | `leak:resolved` | Incident ID, resolution timestamp/status |
-| Server → client | `device:status` | Device ID, online/offline state, last seen |
-| Server → client | `notification:new` | Notification ID, type, message, timestamp |
+| Direction       | Example event        | Intended contents                                            |
+| --------------- | -------------------- | ------------------------------------------------------------ |
+| Client → server | `device:subscribe`   | Device ID; server verifies ownership before joining a room   |
+| Client → server | `device:unsubscribe` | Device ID to leave                                           |
+| Server → client | `telemetry:update`   | Device ID, timestamp, inlet/outlet readings, reported states |
+| Server → client | `leak:detected`      | Stable incident ID, device ID, detection time                |
+| Server → client | `valve:updated`      | Device ID, command/state, timestamp, confirmation source     |
+| Server → client | `leak:resolved`      | Incident ID, resolution timestamp/status                     |
+| Server → client | `device:status`      | Device ID, online/offline state, last seen                   |
+| Server → client | `notification:new`   | Notification ID, type, message, timestamp                    |
 
 Authenticate the handshake and authorize each device subscription. Never broadcast one user's device data to all clients. The Socket.IO transport path and application event names must match at both ends. Socket.IO Client expects a Socket.IO server, not an arbitrary raw WebSocket endpoint.
 
@@ -539,13 +539,13 @@ After replacing example paths/configuration and verifying the scripts:
 7. Flash the ESP32, inspect Serial Monitor, and verify readings appear on Overview.
 8. Test a controlled flow imbalance and confirm local alert/cutoff and persisted event history.
 
-| Service | Example address |
-| --- | --- |
-| Dashboard | `http://localhost:5173` |
-| Backend API | `http://localhost:5000/api` |
-| Socket.IO server origin | `http://localhost:5000` |
-| PostgreSQL from host | `localhost:5432` |
-| Backend from ESP32 | `http://<BACKEND_LAN_IP>:5000/api` |
+| Service                 | Example address                    |
+| ----------------------- | ---------------------------------- |
+| Dashboard               | `http://localhost:5173`            |
+| Backend API             | `http://localhost:5000/api`        |
+| Socket.IO server origin | `http://localhost:5000`            |
+| PostgreSQL from host    | `localhost:5432`                   |
+| Backend from ESP32      | `http://<BACKEND_LAN_IP>:5000/api` |
 
 To stop development, use `Ctrl+C` in the frontend/backend terminals and `docker compose down` for the database. Firmware continues running while powered; follow the documented hardware shutdown procedure.
 
@@ -584,41 +584,41 @@ This command is an example and may put the test credential in shell history. Use
 
 ### Hardware acceptance checks
 
-| Test | Expected behavior to verify |
-| --- | --- |
-| No flow | Stable readings within sensor limitations; no false incident |
-| Balanced flow | Inlet/outlet agree within calibrated tolerance |
-| Brief imbalance | Confirmation logic suppresses transient alerts |
-| Sustained controlled leak | Buzzer activates, valve closes, incident is recorded |
-| Wi-Fi/backend outage | Local sampling and cutoff still work |
-| Reconnection/retry | No duplicated samples, volumes, or incidents |
-| Restart / power loss | Valve and alert behavior match documented defaults |
-| Second account | Cannot read or subscribe to another user's device |
+| Test                      | Expected behavior to verify                                  |
+| ------------------------- | ------------------------------------------------------------ |
+| No flow                   | Stable readings within sensor limitations; no false incident |
+| Balanced flow             | Inlet/outlet agree within calibrated tolerance               |
+| Brief imbalance           | Confirmation logic suppresses transient alerts               |
+| Sustained controlled leak | Buzzer activates, valve closes, incident is recorded         |
+| Wi-Fi/backend outage      | Local sampling and cutoff still work                         |
+| Reconnection/retry        | No duplicated samples, volumes, or incidents                 |
+| Restart / power loss      | Valve and alert behavior match documented defaults           |
+| Second account            | Cannot read or subscribe to another user's device            |
 
 Use a controlled test loop with collected water and protected electronics. Record the sampling interval, confirmation duration, time from leak onset to physical cutoff, trial count, and measured volume. Report measured results with their test conditions; do not reuse illustrative résumé figures as test evidence.
 
 ## Troubleshooting
 
-| Symptom | Checks / resolution |
-| --- | --- |
-| `npm ci` fails | Verify working directory, Node compatibility, and matching lockfile; use `npm install` only when appropriate for a missing lockfile |
-| Missing npm script | Run `npm run`; replace the example with the actual script from `package.json` |
-| Docker cannot start | Check Docker is running and the required virtualization/runtime is configured |
-| Port 5432 already in use | Stop the conflicting local service or change `POSTGRES_PORT` and the host backend URL |
-| Database connection refused | Check container health, hostname, port, credentials, and backend environment loading |
-| Database password change has no effect | Existing volumes keep prior role credentials; update the role and connection string together |
-| Tables do not exist | Apply actual migrations to the database referenced by `DATABASE_URL` |
-| Frontend cannot call API | Verify Axios base URL, backend port, duplicate `/api` prefix, and browser network errors |
-| CORS errors | Match the exact browser origin, including port, in HTTP and Socket.IO configuration |
-| Socket updates missing | Check handshake authentication, path, event names, device subscription, ownership, and listener cleanup |
-| ESP32 cannot reach backend | Use the host LAN address, reachable bind address, correct firewall rule, and Wi-Fi without client isolation |
-| Telemetry rejected | Compare payload with Zod schema and verify device credential, registration, and active state |
-| Incorrect flow readings | Verify pulse wiring, signal voltage, individual calibration, timing, orientation, and flow range |
-| False leak alerts | Check sensor alignment, startup transients, legitimate branches, threshold, and confirmation duration |
-| Valve fails to close | Check supply, driver logic, polarity/default state, wiring, and mechanical operation |
-| ESP32 resets when valve switches | Inspect power capacity, grounding, inductive protection, and electrical noise |
-| Savings look unrealistic | Review units, integration intervals, missing-data handling, duplicates, and counterfactual assumptions |
-| Configuration changes ignored | Restart affected dev services; reflash firmware when its constants change |
+| Symptom                                | Checks / resolution                                                                                                                 |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `npm ci` fails                         | Verify working directory, Node compatibility, and matching lockfile; use `npm install` only when appropriate for a missing lockfile |
+| Missing npm script                     | Run `npm run`; replace the example with the actual script from `package.json`                                                       |
+| Docker cannot start                    | Check Docker is running and the required virtualization/runtime is configured                                                       |
+| Port 5432 already in use               | Stop the conflicting local service or change `POSTGRES_PORT` and the host backend URL                                               |
+| Database connection refused            | Check container health, hostname, port, credentials, and backend environment loading                                                |
+| Database password change has no effect | Existing volumes keep prior role credentials; update the role and connection string together                                        |
+| Tables do not exist                    | Apply actual migrations to the database referenced by `DATABASE_URL`                                                                |
+| Frontend cannot call API               | Verify Axios base URL, backend port, duplicate `/api` prefix, and browser network errors                                            |
+| CORS errors                            | Match the exact browser origin, including port, in HTTP and Socket.IO configuration                                                 |
+| Socket updates missing                 | Check handshake authentication, path, event names, device subscription, ownership, and listener cleanup                             |
+| ESP32 cannot reach backend             | Use the host LAN address, reachable bind address, correct firewall rule, and Wi-Fi without client isolation                         |
+| Telemetry rejected                     | Compare payload with Zod schema and verify device credential, registration, and active state                                        |
+| Incorrect flow readings                | Verify pulse wiring, signal voltage, individual calibration, timing, orientation, and flow range                                    |
+| False leak alerts                      | Check sensor alignment, startup transients, legitimate branches, threshold, and confirmation duration                               |
+| Valve fails to close                   | Check supply, driver logic, polarity/default state, wiring, and mechanical operation                                                |
+| ESP32 resets when valve switches       | Inspect power capacity, grounding, inductive protection, and electrical noise                                                       |
+| Savings look unrealistic               | Review units, integration intervals, missing-data handling, duplicates, and counterfactual assumptions                              |
+| Configuration changes ignored          | Restart affected dev services; reflash firmware when its constants change                                                           |
 
 ## Future scope
 
@@ -643,15 +643,3 @@ Potential additions, subject to implementation and validation:
 3. Follow the actual setup and coding conventions.
 4. Run the available checks relevant to your change.
 5. Submit a pull request describing behavior, validation, and any hardware impact.
-
-Do not commit credentials, private telemetry, local environment files, or generated build artifacts. Include calibration/test details for changes to detection or cutoff behavior.
-
-## License
-
-**License placeholder:** The project owner has not specified a license in the available context. Choose a license, add its text to `LICENSE`, and update this section before describing the project as licensed open source. Do not assume MIT or another license applies.
-
----
-
-**Repository:** `<YOUR_REPOSITORY_URL>`  
-**Maintainer:** `<YOUR_NAME_OR_HANDLE>`  
-**Hardware wiring / calibration reference:** `<ADD_DOCUMENT_PATH>`
