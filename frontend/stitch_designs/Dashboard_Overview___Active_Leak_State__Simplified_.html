@@ -1,0 +1,693 @@
+<!DOCTYPE html><html lang="en" style=""><head></head><body class="bg-background font-body-md text-body-md text-on-surface antialiased flex min-h-screen"><svg class="inline-defs-container" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden"></svg>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+      body { overscroll-behavior: none; }
+      main > :first-child { margin-top: 0 !important; }
+      main > :last-child { margin-bottom: 0 !important; }
+    }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "background": "#f8f9ff",
+            "primary-fixed": "#dae2fd",
+            "primary-fixed-dim": "#bec6e0",
+            "primary": "#000000",
+            "on-tertiary": "#ffffff",
+            "on-surface": "#0b1c30",
+            "surface-dim": "#cbdbf5",
+            "tertiary": "#000000",
+            "on-tertiary-container": "#069669",
+            "surface-container-highest": "#d3e4fe",
+            "on-error": "#ffffff",
+            "on-secondary-container": "#00476e",
+            "tertiary-container": "#002114",
+            "secondary-fixed-dim": "#93ccff",
+            "secondary-fixed": "#cce5ff",
+            "tertiary-fixed": "#85f8c4",
+            "on-primary-container": "#7c839b",
+            "on-secondary-fixed-variant": "#004b73",
+            "error-container": "#ffdad6",
+            "error": "#ba1a1a",
+            "on-secondary": "#ffffff",
+            "on-primary-fixed": "#131b2e",
+            "surface-container-high": "#dce9ff",
+            "primary-container": "#131b2e",
+            "inverse-primary": "#bec6e0",
+            "outline": "#76777d",
+            "on-tertiary-fixed": "#002114",
+            "outline-variant": "#c6c6cd",
+            "on-background": "#0b1c30",
+            "on-secondary-fixed": "#001d31",
+            "on-primary": "#ffffff",
+            "surface": "#f8f9ff",
+            "on-surface-variant": "#45464d",
+            "inverse-on-surface": "#eaf1ff",
+            "surface-tint": "#565e74",
+            "on-tertiary-fixed-variant": "#005137",
+            "surface-bright": "#f8f9ff",
+            "surface-container-low": "#eff4ff",
+            "inverse-surface": "#213145",
+            "secondary": "#006398",
+            "surface-container-lowest": "#ffffff",
+            "on-error-container": "#93000a",
+            "surface-container": "#e5eeff",
+            "secondary-container": "#5bb8fe",
+            "tertiary-fixed-dim": "#68dba9",
+            "surface-variant": "#d3e4fe",
+            "on-primary-fixed-variant": "#3f465c"
+          },
+          borderRadius: {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          spacing: {
+            "table-row-height-dense": "36px",
+            "space-xl": "24px",
+            "space-xs": "4px",
+            "gutter-mobile": "12px",
+            "space-lg": "20px",
+            "space-2xl": "32px",
+            "space-md": "12px",
+            "header-height": "48px",
+            "gutter-desktop": "16px",
+            "sidebar-width": "240px",
+            "space-base": "16px",
+            "sidebar-width-collapsed": "56px",
+            "space-sm": "8px",
+            "space-2xs": "2px",
+            "table-row-height-default": "44px"
+          },
+          fontFamily: {
+            "headline-sm": ["Geist"],
+            "headline-md": ["Geist"],
+            "label-metric-lg": ["JetBrains Mono"],
+            "headline-xl-mobile": ["Geist"],
+            "label-caps": ["Geist"],
+            "body-lg": ["Geist"],
+            "headline-xl": ["Geist"],
+            "label-metric-md": ["JetBrains Mono"],
+            "body-sm": ["Geist"],
+            "label-badge": ["Geist"],
+            "body-md": ["Geist"],
+            "headline-lg": ["Geist"],
+            "label-data-table": ["JetBrains Mono"]
+          }
+        }
+      }
+    };
+  </script>
+
+
+<!-- Persistent Shell: Sidebar -->
+<aside class="h-screen w-sidebar bg-surface-container-lowest border-r border-outline-variant/40 z-50 flex flex-col justify-between select-none shrink-0">
+<div class="flex flex-col">
+<!-- Brand Logo Header -->
+<div class="h-14 px-space-base flex items-center gap-space-sm border-b border-outline-variant/30"><div class="flex items-center gap-2.5"><svg class="w-8 h-8 shrink-0" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" x="4" y="4" rx="6" fill="#0F172A"></rect><path d="M20 9C20 9 13 18 13 22.5C13 26.0899 15.9101 29 19.5 29C23.0899 29 26 26.0899 26 22.5C26 18 20 9 20 9Z" fill="#0284C7" stroke="#38BDF8" stroke-width="1.5" stroke-linejoin="round"></path><circle cx="20" cy="22" r="2.5" fill="#FFFFFF"></circle><path d="M11 20L8 20M32 20L29 20M20 7L20 4M20 33L20 30" stroke="#0284C7" stroke-width="1.5" stroke-linecap="round"></path></svg><div class="flex flex-col justify-center min-w-0"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight uppercase leading-none font-bold">LEAKLENS</span><span class="font-label-caps text-label-caps text-on-surface-variant leading-none mt-space-2xs truncate">Telemetry v2.4</span></div></div></div>
+<!-- Nav Links -->
+<nav class="flex flex-col gap-space-2xs p-space-sm mt-space-xs" data-active-classes="bg-surface-container text-on-surface font-semibold border-l-2 border-secondary">
+<a aria-current="page" class="flex items-center gap-space-sm px-space-sm py-2 rounded-xl transition-colors bg-surface-container text-on-surface font-semibold border-l-2 border-secondary" data-path="overview" href="#">
+<span class="material-symbols-outlined text-[20px]">grid_view</span>
+<span class="font-body-md text-body-md">Overview</span>
+</a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="analytics" href="#"><span class="material-symbols-outlined text-[20px]">bar_chart</span><span class="font-body-md text-body-md">Analytics</span></a>
+
+
+
+
+<a class="flex items-center justify-between px-space-sm py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="notifications" href="#">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="font-body-md text-body-md">Notifications</span>
+</div>
+<span class="font-label-badge text-label-badge bg-error text-on-error px-1.5 py-0.5 rounded-full">1</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-sm py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="devices" href="#">
+<span class="material-symbols-outlined text-[20px]">developer_board</span>
+<span class="font-body-md text-body-md">Devices</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-sm py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" data-path="profile-settings" href="#">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+<span class="font-body-md text-body-md">Profile / Settings</span>
+</a>
+</nav>
+</div>
+<!-- Footer Status -->
+<div class="flex flex-col border-t border-outline-variant/30 p-space-sm bg-surface-container-lowest">
+<div class="p-space-sm bg-surface-container-low border border-outline-variant/40 rounded-lg flex flex-col gap-space-2xs mb-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Edge Gateway</span>
+<span class="flex items-center gap-1 font-label-caps text-label-caps text-on-tertiary-container font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>Online
+          </span>
+</div>
+<div class="flex items-center justify-between text-on-surface font-label-data-table text-label-data-table">
+<span class="text-on-surface-variant">Status</span>
+<span class="text-error font-semibold">Cutoff Active</span>
+</div>
+</div>
+<a class="flex items-center gap-space-sm px-space-sm py-2 text-on-surface-variant hover:text-error hover:bg-error-container/30 rounded-lg transition-colors" data-path="login" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span class="font-body-sm text-body-sm font-medium">Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Shell Content -->
+<div class="flex-1 min-w-0 flex-col">
+<!-- Persistent Header -->
+<header class="top-0 right-0 h-14 bg-surface-container-lowest border-b border-outline-variant/30 z-40 flex items-center justify-between px-space-lg w-full">
+<div class="flex items-center gap-space-lg">
+<div class="flex items-center gap-space-sm px-space-sm py-1.5 bg-surface-container-low border border-outline-variant/50 rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">domain</span>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Main Plant — Bldg 4 (Zone B Risers)</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">expand_more</span>
+</div>
+<div class="hidden xl:flex items-center gap-space-base border-l border-outline-variant/40 pl-space-base font-label-data-table text-label-data-table">
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="text-on-surface font-medium">LLS-942-B4</span>
+</div>
+<div class="flex items-center gap-1 text-error font-semibold">
+<span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
+<span class="">Leak Cutoff Active</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/50 hover:bg-surface-container-low text-on-surface-variant transition-colors" title="Refresh Telemetry" type="button">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+</button>
+<button class="relative w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/50 hover:bg-surface-container-low text-on-surface-variant transition-colors" title="Notifications" type="button">
+<span class="material-symbols-outlined text-[18px]">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-error ring-2 ring-surface-container-lowest"></span>
+</button>
+<div class="flex items-center gap-space-sm pl-space-xs border-l border-outline-variant/40">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary font-semibold text-xs">
+            MC
+          </div>
+<div class="hidden lg:flex flex-col">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface leading-tight">Marcus Chen</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant leading-tight">Lead Facility Eng.</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Operational Workspace -->
+<main class="w-full bg-background px-space-lg min-h-screen flex-1">
+<div class="flex flex-col w-full pb-space-2xl space-y-space-lg pt-space-md">
+<!-- 1. Top Operational Alert Banner -->
+<section class="w-full bg-red-500/10 border-2 border-red-600 rounded-xl overflow-hidden shadow-sm flex flex-col lg:flex-row items-stretch justify-between">
+<div class="p-space-lg flex-1 flex flex-col justify-center space-y-space-xs">
+<div class="flex items-center gap-2">
+<span class="flex h-3 w-3 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-600 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-red-600"></span>
+</span>
+<h1 class="text-xl sm:text-2xl font-bold tracking-tight text-red-950 flex items-center gap-2">
+                ⚠️ LEAK DETECTED — AUTOMATIC CUTOFF ACTIVATED
+              </h1>
+</div>
+<p class="font-body-lg text-red-950/80 max-w-3xl leading-relaxed">
+              Abnormal water flow detected between inlet and outlet. The motorized shutoff valve has closed to isolate the line and prevent flooding.
+            </p>
+<div class="flex items-center gap-2 font-label-data-table text-xs text-red-900/90 pt-1 font-medium">
+<span class="material-symbols-outlined text-[15px]">schedule</span>
+<span class="">Detected at 14:32:18 • Valve sealed at 14:32:23 (Cutoff latency: 4.8s)</span>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="p-space-lg flex flex-row lg:flex-col items-center lg:items-end justify-center gap-space-sm bg-red-500/5 lg:border-l border-t lg:border-t-0 border-red-300 shrink-0">
+<button class="w-full sm:w-auto px-space-lg py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold text-sm tracking-wide shadow-sm flex items-center justify-center gap-2 transition-all" id="openResolutionModal" type="button">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span class="">✓ Mark Leak as Fixed</span>
+</button>
+<button class="w-full sm:w-auto px-space-md py-2.5 bg-surface-container-lowest border border-outline-variant/60 hover:bg-surface-container-low text-on-surface rounded-lg font-semibold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all" id="openOverrideDialog" type="button">
+<span class="material-symbols-outlined text-[16px] text-error">lock_open</span>
+<span class="">Manual Override</span>
+</button>
+</div>
+</section>
+<!-- 2. Four Connected Live Flow Metric Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- Card 1: INLET FLOW -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl border border-outline-variant/40 shadow-sm flex flex-col justify-between space-y-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-xs text-on-surface-variant font-semibold tracking-wider uppercase">Inlet Flow</span>
+<span class="material-symbols-outlined text-[20px] text-secondary">water_drop</span>
+</div>
+<div>
+<div class="flex items-baseline gap-1.5">
+<span class="font-label-metric-lg text-3xl font-bold text-on-surface">12.5</span>
+<span class="font-label-caps text-xs text-on-surface-variant font-medium">L/min</span>
+</div>
+<p class="font-body-sm text-xs text-on-surface-variant mt-1">Entering zone</p>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 70%;"></div>
+</div>
+</div>
+<!-- Card 2: OUTLET FLOW -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl border border-outline-variant/40 shadow-sm flex flex-col justify-between space-y-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-xs text-on-surface-variant font-semibold tracking-wider uppercase">Outlet Flow</span>
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">output</span>
+</div>
+<div>
+<div class="flex items-baseline gap-1.5">
+<span class="font-label-metric-lg text-3xl font-bold text-on-surface">7.1</span>
+<span class="font-label-caps text-xs text-on-surface-variant font-medium">L/min</span>
+</div>
+<p class="font-body-sm text-xs text-on-surface-variant mt-1">Delivering to fixtures</p>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-outline h-full rounded-full" style="width: 40%;"></div>
+</div>
+</div>
+<!-- Card 3: FLOW DIFFERENCE -->
+<div class="bg-error-container/40 p-space-base rounded-xl border-2 border-red-500 shadow-sm flex flex-col justify-between space-y-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-xs text-error font-bold tracking-wider uppercase">Flow Difference (Inlet − Outlet)</span>
+<span class="material-symbols-outlined text-[20px] text-error animate-pulse">warning</span>
+</div>
+<div>
+<div class="flex items-baseline gap-1.5">
+<span class="font-label-metric-lg text-3xl font-bold text-error">+5.4</span>
+<span class="font-label-caps text-xs text-error font-bold uppercase">L/min</span>
+</div>
+<div class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded bg-error text-on-error font-label-badge text-[11px] font-bold">
+                🚨 UNACCOUNTED LOSS (Exceeds 0.8 L/min safety limit)
+              </div>
+</div>
+<div class="w-full bg-error-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-error h-full rounded-full" style="width: 100%;"></div>
+</div>
+</div>
+<!-- Card 4: VALVE STATUS -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl border border-red-300 shadow-sm flex flex-col justify-between space-y-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-xs text-on-surface-variant font-semibold tracking-wider uppercase">Valve Status</span>
+<span class="material-symbols-outlined text-[20px] text-error font-bold">lock</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-metric-lg text-2xl font-bold text-error">CLOSED</span>
+</div>
+<p class="font-body-sm text-xs text-on-surface-variant mt-1">Shut off automatically in 4.8s</p>
+</div>
+<div class="flex items-center gap-1 text-[11px] font-label-data-table text-on-tertiary-container font-semibold">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container"></span>
+<span class="">100% Sealed &amp; Isolated</span>
+</div>
+</div>
+</div>
+<!-- 3. Central Flow Divergence & Cutoff Graph -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 shadow-sm p-space-lg flex flex-col space-y-space-md">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm">
+<div>
+<h2 class="text-lg font-bold text-on-surface">Incident Flow Divergence &amp; Cutoff Telemetry</h2>
+<p class="font-body-sm text-xs text-on-surface-variant mt-0.5">
+                Inlet and outlet lines track together until 14:32:18 when outlet drops. Valve actuates and shuts off both lines to 0 L/min at 14:32:23.
+              </p>
+</div>
+<!-- Graph Legend -->
+<div class="flex flex-wrap items-center gap-space-md font-label-caps text-xs uppercase shrink-0">
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-1 bg-secondary rounded-full"></span>
+<span class="text-on-surface-variant">Inlet (12.5 L/min)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-1 bg-outline rounded-full"></span>
+<span class="text-on-surface-variant">Outlet (7.1 L/min)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 bg-red-500/20 border border-red-500 rounded-sm"></span>
+<span class="text-error font-bold">Loss Area (5.4 L/min)</span>
+</div>
+</div>
+</div>
+<!-- Time-Series Visual SVG Canvas -->
+<div class="relative w-full h-72 bg-surface-container-low/40 rounded-lg p-space-sm flex flex-col justify-between overflow-hidden border border-outline-variant/30">
+<!-- Background Grid Lines -->
+<div class="absolute inset-x-12 top-6 bottom-8 flex flex-col justify-between pointer-events-none opacity-40">
+<div class="w-full h-px bg-outline-variant"></div>
+<div class="w-full h-px bg-outline-variant"></div>
+<div class="w-full h-px bg-outline-variant"></div>
+<div class="w-full h-px bg-outline-variant"></div>
+<div class="w-full h-px bg-outline-variant"></div>
+</div>
+<!-- Y-Axis Labels -->
+<div class="absolute left-3 top-4 bottom-8 flex flex-col justify-between font-label-data-table text-[11px] text-on-surface-variant pointer-events-none select-none">
+<span class="">15 L/m</span>
+<span class="">11 L/m</span>
+<span class="">7 L/m</span>
+<span class="">3 L/m</span>
+<span class="">0 L/m</span>
+</div>
+<!-- SVG Data Plot -->
+<div class="w-full h-full pl-12 pb-6 pt-2 pr-4">
+<svg class="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 800 200">
+<defs>
+<linearGradient id="breachGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#ba1a1a" stop-opacity="0.4"></stop>
+<stop offset="100%" stop-color="#ba1a1a" stop-opacity="0.05"></stop>
+</linearGradient>
+</defs>
+<!-- Shaded Leak Area (14:32:18 -> 14:32:23) -->
+<polygon fill="url(#breachGradient)" points="460,50 610,50 640,190 610,120 460,50"></polygon>
+<!-- Inlet Flow Line (Blue) - Stable at 12.5 (y=50), then dives to 0 at cutoff (y=190) -->
+<path d="M 0,50 L 150,48 L 300,52 L 460,50 L 610,50 L 640,190 L 800,190" fill="none" stroke="#006398" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+<!-- Outlet Flow Line (Dark/Dashed) - Tracks inlet until breach at 460, drops to 7.1 (y=120), then dives to 0 at 640 -->
+<path d="M 0,52 L 150,50 L 300,53 L 460,51 L 490,110 L 610,120 L 640,190 L 800,190" fill="none" stroke="#45464d" stroke-dasharray="3 2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+<!-- Point of Divergence Marker -->
+<line stroke="#ba1a1a" stroke-dasharray="3 3" stroke-width="1.5" x1="460" x2="460" y1="10" y2="190"></line>
+<circle cx="460" cy="50" fill="#ba1a1a" r="4.5"></circle>
+<!-- Valve Cutoff Complete Marker -->
+<line stroke="#069669" stroke-dasharray="3 3" stroke-width="1.5" x1="640" x2="640" y1="10" y2="190"></line>
+<circle cx="640" cy="190" fill="#069669" r="4.5"></circle>
+</svg>
+</div>
+<!-- In-graph callout badges -->
+<div class="absolute top-4 left-[54%] -translate-x-1/2 bg-red-50 border border-red-300 px-2 py-1 rounded shadow-sm flex items-center gap-1.5 pointer-events-none">
+<span class="w-2 h-2 rounded-full bg-error animate-ping"></span>
+<span class="font-label-caps text-[11px] text-error font-bold uppercase">14:32:18 Leak Divergence (+5.4 L/m)</span>
+</div>
+<div class="absolute bottom-8 left-[78%] -translate-x-1/2 bg-emerald-50 border border-emerald-300 px-2 py-1 rounded shadow-sm flex items-center gap-1.5 pointer-events-none">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container"></span>
+<span class="font-label-caps text-[11px] text-on-tertiary-container font-bold uppercase">14:32:23 Auto-Cutoff Sealed</span>
+</div>
+<!-- X-Axis Timestamps -->
+<div class="flex justify-between pl-12 pr-4 font-label-data-table text-[11px] text-on-surface-variant select-none">
+<span class="">14:31:30</span>
+<span class="">14:31:50</span>
+<span class="">14:32:10</span>
+<span class="text-error font-bold">14:32:18 (Leak Detected)</span>
+<span class="text-on-tertiary-container font-bold">14:32:23 (Cutoff Sealed)</span>
+<span class="">14:32:45</span>
+</div>
+</div>
+</section>
+<!-- 4. Bottom Two-Column Impact & Action Area -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-stretch">
+<!-- Left Column: WATER LOSS & IMPACT LEDGER (6 Cols) -->
+<div class="lg:col-span-6 bg-surface-container-lowest rounded-xl border border-outline-variant/40 shadow-sm p-space-lg flex flex-col justify-between space-y-space-md">
+<div>
+<div class="flex items-center justify-between border-b border-outline-variant/30 pb-space-sm mb-space-md">
+<h3 class="text-base font-bold text-on-surface uppercase tracking-wide flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">water_damage</span>
+<span class="">Water Loss &amp; Impact Ledger</span>
+</h3>
+<span class="font-label-badge text-[11px] px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-semibold">
+                  CONFIRMED INCIDENT DATA
+                </span>
+</div>
+<!-- Two Clear Metric Blocks -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<!-- Block 1: Water Wasted -->
+<div class="p-space-base bg-red-50/70 border border-red-200 rounded-xl flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-xs font-bold text-red-800 uppercase tracking-wide">Water Wasted</span>
+<span class="material-symbols-outlined text-error text-[20px]">delete_sweep</span>
+</div>
+<div class="mt-2 mb-1">
+<div class="flex items-baseline gap-1">
+<span class="font-label-metric-lg text-3xl font-extrabold text-error">0.72</span>
+<span class="font-label-caps text-sm font-bold text-error uppercase">L</span>
+</div>
+</div>
+<p class="font-body-sm text-xs text-red-900/80 leading-snug">
+                    Cumulative volume lost during the 4.8s cutoff window before seal.
+                  </p>
+</div>
+<!-- Block 2: Estimated Water Saved -->
+<div class="p-space-base bg-emerald-50/70 border border-emerald-200 rounded-xl flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-xs font-bold text-emerald-800 uppercase tracking-wide">Estimated Water Saved</span>
+<span class="material-symbols-outlined text-emerald-700 text-[20px]">savings</span>
+</div>
+<div class="mt-2 mb-1">
+<div class="flex items-baseline gap-1">
+<span class="font-label-metric-lg text-3xl font-extrabold text-emerald-700">84.6</span>
+<span class="font-label-caps text-sm font-bold text-emerald-700 uppercase">L</span>
+</div>
+</div>
+<p class="font-body-sm text-xs text-emerald-900/80 leading-snug">
+                    Avoided water loss calculated against standard 15-min human response time.
+                  </p>
+</div>
+</div>
+</div>
+<!-- Impact Protection Note -->
+<div class="p-space-md bg-surface-container-low rounded-lg border border-outline-variant/30 flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-on-tertiary-container text-[20px] shrink-0 mt-0.5">verified_user</span>
+<p class="font-body-sm text-xs text-on-surface leading-relaxed">
+<strong>Asset Safeguard:</strong> Rapid automatic shutoff prevented estimated structural drywall and electrical conduit damage on Floor 4.
+              </p>
+</div>
+</div>
+<!-- Right Column: INCIDENT SEQUENCE TIMELINE (6 Cols) -->
+<div class="lg:col-span-6 bg-surface-container-lowest rounded-xl border border-outline-variant/40 shadow-sm p-space-lg flex flex-col justify-between space-y-space-md">
+<div>
+<div class="flex items-center justify-between border-b border-outline-variant/30 pb-space-sm mb-space-md">
+<h3 class="text-base font-bold text-on-surface uppercase tracking-wide flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">history_toggle_off</span>
+<span class="">Incident Sequence Timeline</span>
+</h3>
+<span class="font-label-data-table text-xs text-on-surface-variant font-medium">Synced RTC</span>
+</div>
+<!-- 5-Step Intuitive Operational Flow -->
+<div class="space-y-space-sm relative">
+<!-- Vertical Progress Line -->
+<div class="absolute left-[15px] top-3 bottom-3 w-0.5 bg-outline-variant/40"></div>
+<!-- Step 1 -->
+<div class="flex items-center gap-space-base relative">
+<div class="w-8 h-8 rounded-full bg-error text-on-error flex items-center justify-center shrink-0 z-10 text-xs font-bold shadow-sm">
+                    1
+                  </div>
+<div class="flex-1 bg-surface-container-low px-space-md py-2 rounded-lg flex items-center justify-between">
+<div>
+<span class="font-label-data-table text-xs font-bold text-error">14:32:18</span>
+<span class="font-body-sm text-xs font-semibold text-on-surface ml-2">Leak Detected</span>
+</div>
+<span class="text-xs text-on-surface-variant font-medium">Flow difference spiked to +5.4 L/min</span>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="flex items-center gap-space-base relative">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 z-10 text-xs font-bold shadow-sm">
+                    2
+                  </div>
+<div class="flex-1 bg-surface-container-low px-space-md py-2 rounded-lg flex items-center justify-between">
+<div>
+<span class="font-label-data-table text-xs font-bold text-on-surface">14:32:19</span>
+<span class="font-body-sm text-xs font-semibold text-on-surface ml-2">Automated Cutoff Dispatched</span>
+</div>
+<span class="text-xs text-on-surface-variant font-medium">Edge controller actuated shutoff</span>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="flex items-center gap-space-base relative">
+<div class="w-8 h-8 rounded-full bg-on-tertiary-container text-white flex items-center justify-center shrink-0 z-10 text-xs font-bold shadow-sm">
+                    3
+                  </div>
+<div class="flex-1 bg-emerald-50 border border-emerald-200 px-space-md py-2 rounded-lg flex items-center justify-between">
+<div>
+<span class="font-label-data-table text-xs font-bold text-emerald-800">14:32:23</span>
+<span class="font-body-sm text-xs font-semibold text-emerald-950 ml-2">Valve 100% Sealed</span>
+</div>
+<span class="text-xs text-emerald-800 font-medium">Flow stopped, line isolated</span>
+</div>
+</div>
+<!-- Step 4 -->
+<div class="flex items-center gap-space-base relative">
+<div class="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center shrink-0 z-10 text-xs font-bold shadow-sm">
+                    4
+                  </div>
+<div class="flex-1 bg-surface-container-low px-space-md py-2 rounded-lg flex items-center justify-between">
+<div>
+<span class="font-label-data-table text-xs font-bold text-on-surface">14:32:25</span>
+<span class="font-body-sm text-xs font-semibold text-on-surface ml-2">SMS &amp; Push Alert Broadcast</span>
+</div>
+<span class="text-xs text-on-surface-variant font-medium">Dispatched to Facilities Team</span>
+</div>
+</div>
+<!-- Step 5 (Current) -->
+<div class="flex items-center gap-space-base relative">
+<div class="w-8 h-8 rounded-full bg-error text-on-error flex items-center justify-center shrink-0 z-10 text-xs font-bold animate-pulse shadow-sm">
+                    5
+                  </div>
+<div class="flex-1 bg-red-50 border border-red-200 px-space-md py-2 rounded-lg flex items-center justify-between">
+<div>
+<span class="font-label-data-table text-xs font-bold text-red-800">Current</span>
+<span class="font-body-sm text-xs font-bold text-red-950 ml-2">Awaiting Physical On-Site Repair</span>
+</div>
+<span class="text-xs font-bold text-error uppercase">Action Required</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Action Button trigger in timeline -->
+<button class="w-full py-2.5 bg-primary hover:opacity-90 text-on-primary rounded-lg font-semibold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all mt-space-sm" onclick="document.getElementById('openResolutionModal').click();" type="button">
+<span class="material-symbols-outlined text-[16px] text-tertiary-fixed">verified</span>
+<span class="">Proceed to Mark as Fixed</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Resolution Confirmation Modal -->
+<div class="fixed inset-0 bg-primary/60 z-50 flex items-center justify-center p-space-base hidden" id="resolutionModalOverlay">
+<div class="bg-surface-container-lowest max-w-lg w-full rounded-xl shadow-2xl overflow-hidden flex flex-col border border-outline-variant/40">
+<!-- Modal Header -->
+<div class="p-space-base bg-surface-container-low flex items-center justify-between border-b border-outline-variant/30">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+</div>
+<div>
+<h3 class="font-bold text-base text-on-surface">Mark Leak as Fixed &amp; Reopen Valve</h3>
+<span class="font-label-caps text-xs text-on-surface-variant">INCIDENT #LK-2025-0881</span>
+</div>
+</div>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors" id="closeResolutionModal" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Modal Body -->
+<div class="p-space-lg space-y-space-base">
+<p class="font-body-md text-sm text-on-surface leading-relaxed">
+          Please confirm that physical inspection and repair have been completed on-site in <strong>Zone B Risers</strong> before reopening the motorized shutoff valve.
+        </p>
+<!-- Verification Checklist -->
+<div class="space-y-space-xs bg-surface-container-low p-space-md rounded-lg border border-outline-variant/30">
+<label class="flex items-start gap-space-sm pt-1 cursor-pointer select-none">
+<input checked="" class="mt-1 w-4 h-4 rounded text-primary accent-primary" id="check1" type="checkbox">
+<span class="font-body-sm text-xs text-on-surface">
+              Physical piping has been inspected and ruptured joint or fitting has been replaced/resealed.
+            </span>
+</label>
+<label class="flex items-start gap-space-sm pt-1 cursor-pointer select-none">
+<input checked="" class="mt-1 w-4 h-4 rounded text-primary accent-primary" id="check2" type="checkbox">
+<span class="font-body-sm text-xs text-on-surface">
+              Downstream area cleared of sensitive electrical hazards.
+            </span>
+</label>
+<label class="flex items-start gap-space-sm pt-1 cursor-pointer select-none">
+<input class="mt-1 w-4 h-4 rounded text-primary accent-primary" id="check3" type="checkbox">
+<span class="font-body-sm text-xs font-semibold text-on-surface">
+              Operator sign-off verified to re-arm automatic telemetry.
+            </span>
+</label>
+</div>
+<div class="p-space-sm bg-emerald-50 border border-emerald-200 rounded flex items-center gap-space-sm text-emerald-900">
+<span class="material-symbols-outlined text-[20px] text-emerald-700 shrink-0">info</span>
+<span class="font-body-sm text-xs">
+            Confirming will automatically actuate the valve to reopen gradually, restoring full water delivery.
+          </span>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="p-space-base bg-surface-container-low flex flex-wrap items-center justify-end gap-space-sm border-t border-outline-variant/30">
+<button class="px-space-md py-2 rounded bg-surface-container-highest text-on-surface font-semibold text-xs uppercase tracking-wider hover:bg-outline-variant transition-colors" id="cancelResolutionModal" type="button">
+          Cancel / Keep Valve Sealed
+        </button>
+<button class="px-space-md py-2 rounded bg-emerald-700 text-white font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5 hover:bg-emerald-800 transition-colors shadow-sm" id="submitResolution" type="button">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+          Confirm &amp; Reopen Valve
+        </button>
+</div>
+</div>
+</div>
+<!-- Manual Override Dialog -->
+<div class="fixed inset-0 bg-primary/60 z-50 flex items-center justify-center p-space-base hidden" id="overrideModalOverlay">
+<div class="bg-surface-container-lowest max-w-md w-full rounded-xl shadow-2xl overflow-hidden flex flex-col border border-outline-variant/40">
+<div class="p-space-base bg-error-container text-on-error-container flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[24px]">warning</span>
+<h3 class="font-bold text-base">Manual Valve Override</h3>
+</div>
+<div class="p-space-lg space-y-space-sm">
+<p class="font-body-md text-sm text-on-surface">
+          Forcing the valve open while a flow divergence remains active may resume leakage.
+        </p>
+<p class="font-body-sm text-xs text-on-surface-variant">
+          This manual command will be recorded in the permanent audit trail.
+        </p>
+</div>
+<div class="p-space-base bg-surface-container-low flex items-center justify-end gap-space-sm border-t border-outline-variant/30">
+<button class="px-space-md py-2 rounded bg-surface-container-highest text-on-surface font-semibold text-xs uppercase" id="cancelOverride" type="button">
+          Cancel
+        </button>
+<button class="px-space-md py-2 rounded bg-error text-on-error font-semibold text-xs uppercase flex items-center gap-1 hover:bg-red-700 transition-colors" id="confirmOverride" type="button">
+<span class="material-symbols-outlined text-[16px]">lock_open</span>
+          Force Open Valve
+        </button>
+</div>
+</div>
+</div>
+<script>
+    // Modal Interaction handlers
+    const resModal = document.getElementById('resolutionModalOverlay');
+    const openResBtn = document.getElementById('openResolutionModal');
+    const closeResBtn = document.getElementById('closeResolutionModal');
+    const cancelResBtn = document.getElementById('cancelResolutionModal');
+    const submitResBtn = document.getElementById('submitResolution');
+
+    const ovModal = document.getElementById('overrideModalOverlay');
+    const openOvBtn = document.getElementById('openOverrideDialog');
+    const cancelOvBtn = document.getElementById('cancelOverride');
+    const confirmOvBtn = document.getElementById('confirmOverride');
+
+    openResBtn?.addEventListener('click', () => resModal?.classList.remove('hidden'));
+    closeResBtn?.addEventListener('click', () => resModal?.classList.add('hidden'));
+    cancelResBtn?.addEventListener('click', () => resModal?.classList.add('hidden'));
+
+    submitResBtn?.addEventListener('click', () => {
+      const chk3 = document.getElementById('check3');
+      if (chk3 && !chk3.checked) {
+        alert('Please confirm all checklist items before reopening the valve.');
+        return;
+      }
+      submitResBtn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">refresh</span> Reopening Valve...';
+      setTimeout(() => {
+        alert('Leak marked as fixed. Valve successfully reopened and line returned to normal flow.');
+        resModal?.classList.add('hidden');
+        window.location.reload();
+      }, 1000);
+    });
+
+    openOvBtn?.addEventListener('click', () => ovModal?.classList.remove('hidden'));
+    cancelOvBtn?.addEventListener('click', () => ovModal?.classList.add('hidden'));
+    confirmOvBtn?.addEventListener('click', () => {
+      confirmOvBtn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">autorenew</span> Transmitting...';
+      setTimeout(() => {
+        alert('MANUAL OVERRIDE: Valve opened by operator.');
+        ovModal?.classList.add('hidden');
+        window.location.reload();
+      }, 800);
+    });
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body></html>

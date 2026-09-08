@@ -1,0 +1,8 @@
+{
+  "jsonrpc": "2.0",
+  "id": 11,
+  "error": {
+    "code": -32001,
+    "message": "mcp-remote: Incompatible auth server: does not support dynamic client registration"
+  }
+}
