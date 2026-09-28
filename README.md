@@ -70,4 +70,4 @@ A retry must retain the same sample content and ID; only `ageMs` may increase. T
 
 Flow difference is signed (`inlet - outlet`); incident loss estimates remain nonnegative. Valve state always describes the commanded output, not physical position. Confirmation duration ends at the output command and is not mechanical closure time.
 
-Deploy the backend migration/build before uploading the updated firmware, because the firmware requires the new acknowledgement headers. The additive migration preserves records. Existing retained firmware incidents are migrated from the old Preferences record without inventing event timing. Local REARM and offline latest-sample behavior are unchanged. Full daily consumption accounting remains separate analytics work.
+Deploy the backend migration/build before uploading the updated firmware, because the firmware requires the new acknowledgement headers. The additive migration preserves records. Existing retained firmware incidents are migrated from the old Preferences record without inventing event timing. Local REARM and offline latest-sample behavior are unchanged. Full daily consumption accounting remains separate analytics works.
