@@ -25,13 +25,14 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    const authenticationExpired = error.response?.data?.message === 'Invalid or expired access token.';
+    if (authenticationExpired && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
       const refreshToken = localStorage.getItem('leaklens_refresh_token');
       if (refreshToken) {
         try {
           const res = await axios.post(`${API_BASE_URL}/auth/refresh`, { refreshToken });
-          const newToken = res.data.accessToken;
+          const newToken = res.data.data?.accessToken || res.data.accessToken;
           localStorage.setItem('leaklens_token', newToken);
           if (res.data.refreshToken) {
             localStorage.setItem('leaklens_refresh_token', res.data.refreshToken);

@@ -1,14 +1,34 @@
-import React, { useState } from 'react';
+import { Icon } from '../components/Icon';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { authApi } from '../api';
+import axios from 'axios';
 
 export const SettingsPage: React.FC = () => {
   const { user, updateProfile } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'settings'>('profile');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => localStorage.getItem('leaklens_theme') === 'dark' ? 'dark' : 'light');
+
+  const changeTheme = (nextTheme: 'light' | 'dark') => {
+    setTheme(nextTheme);
+    localStorage.setItem('leaklens_theme', nextTheme);
+    document.documentElement.dataset.theme = nextTheme;
+  };
 
   // Profile Form
-  const [name, setName] = useState(user?.name || 'Marcus Chen');
-  const [email, setEmail] = useState(user?.email || 'marcus.chen@leaklens.io');
+  const [name, setName] = useState(user?.name || '');
+  const [email, setEmail] = useState(user?.email || '');
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [error, setError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [savingPassword, setSavingPassword] = useState(false);
+
+  useEffect(() => {
+    setName(user?.name || '');
+    setEmail(user?.email || '');
+  }, [user?.name, user?.email]);
 
   // Settings switches
   const [notifyLeak, setNotifyLeak] = useState(true);
@@ -21,24 +41,36 @@ export const SettingsPage: React.FC = () => {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    updateProfile(name, email);
-    setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 3000);
+    setSavingProfile(true);
+    setSaveSuccess(false);
+    try { await updateProfile(name.trim(), email.trim()); setError(''); setSaveSuccess(true); }
+    catch (cause) {
+      setError(axios.isAxiosError(cause) && cause.response?.status === 409
+        ? 'That email address is already in use.'
+        : 'Could not save profile. Please try again.');
+    } finally { setSavingProfile(false); }
   };
 
-  const handleChangePassword = (e: React.FormEvent) => {
+  const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert('Password updated successfully.');
-    setPasswordModalOpen(false);
-    setOldPassword('');
-    setNewPassword('');
+    setSavingPassword(true);
+    setPasswordError('');
+    try {
+      await authApi.changePassword(oldPassword, newPassword);
+      setPasswordModalOpen(false); setOldPassword(''); setNewPassword(''); setPasswordSuccess(true);
+    } catch (cause) {
+      setPasswordError(axios.isAxiosError(cause) && cause.response?.status === 401
+        ? 'Current password is incorrect.'
+        : 'Could not change password. Please try again.');
+    } finally { setSavingPassword(false); }
   };
 
   return (
     <div className="w-full pb-8 max-w-3xl mx-auto space-y-6">
       {/* Header */}
+      {error && <p role="alert" className="text-xs text-red-700">{error}</p>}
       <div className="pb-5 border-b border-[#c6c6cd]/40">
         <h1 className="text-2xl font-bold text-[#0b1c30] tracking-tight">Profile / Settings</h1>
         <p className="text-xs text-[#76777d] mt-1">
@@ -114,9 +146,10 @@ export const SettingsPage: React.FC = () => {
                 )}
                 <button
                   type="submit"
+                  disabled={savingProfile}
                   className="ml-auto bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors cursor-pointer"
                 >
-                  Save Changes
+                  {savingProfile ? 'Saving...' : 'Save Changes'}
                 </button>
               </div>
             </form>
@@ -136,6 +169,7 @@ export const SettingsPage: React.FC = () => {
               Change Password
             </button>
           </div>
+          {passwordSuccess && <p role="status" className="text-xs text-emerald-700">Password changed successfully.</p>}
         </div>
       ) : (
         <div className="space-y-5">
@@ -150,9 +184,11 @@ export const SettingsPage: React.FC = () => {
                   <div className="font-semibold text-[#0b1c30]">Interface Theme</div>
                   <div className="text-[11px] text-[#76777d]">Application appearance mode</div>
                 </div>
-                <div className="inline-flex p-1 bg-slate-100 rounded-lg text-xs font-semibold">
-                  <span className="px-2.5 py-1 rounded bg-white text-slate-900 shadow-xs">Light</span>
-                  <span className="px-2.5 py-1 text-slate-500">Dark</span>
+                <div className="inline-flex p-1 bg-slate-100 rounded-lg text-xs font-semibold" role="group" aria-label="Interface theme">
+                  <button type="button" aria-pressed={theme === 'light'} onClick={() => changeTheme('light')}
+                    className={`px-2.5 py-1 rounded cursor-pointer ${theme === 'light' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'}`}>Light</button>
+                  <button type="button" aria-pressed={theme === 'dark'} onClick={() => changeTheme('dark')}
+                    className={`px-2.5 py-1 rounded cursor-pointer ${theme === 'dark' ? 'bg-slate-600 text-white shadow-xs' : 'text-slate-500'}`}>Dark</button>
                 </div>
               </div>
 
@@ -184,7 +220,7 @@ export const SettingsPage: React.FC = () => {
               Notification Preferences
             </h2>
             <p className="text-xs text-[#76777d] pb-2 border-b border-[#e5eeff]">
-              Choose which system events generate alarms and push notifications.
+              Notification preferences are not configurable yet. Hardware leak alerts remain enabled.
             </p>
 
             <div className="divide-y divide-[#e5eeff] text-xs">
@@ -195,6 +231,7 @@ export const SettingsPage: React.FC = () => {
                 </div>
                 <input
                   type="checkbox"
+                  disabled
                   checked={notifyLeak}
                   onChange={(e) => setNotifyLeak(e.target.checked)}
                   className="w-4 h-4 accent-slate-900 cursor-pointer"
@@ -208,6 +245,7 @@ export const SettingsPage: React.FC = () => {
                 </div>
                 <input
                   type="checkbox"
+                  disabled
                   checked={notifyCutoff}
                   onChange={(e) => setNotifyCutoff(e.target.checked)}
                   className="w-4 h-4 accent-slate-900 cursor-pointer"
@@ -221,6 +259,7 @@ export const SettingsPage: React.FC = () => {
                 </div>
                 <input
                   type="checkbox"
+                  disabled
                   checked={notifyOffline}
                   onChange={(e) => setNotifyOffline(e.target.checked)}
                   className="w-4 h-4 accent-slate-900 cursor-pointer"
@@ -234,6 +273,7 @@ export const SettingsPage: React.FC = () => {
                 </div>
                 <input
                   type="checkbox"
+                  disabled
                   checked={notifyResolved}
                   onChange={(e) => setNotifyResolved(e.target.checked)}
                   className="w-4 h-4 accent-slate-900 cursor-pointer"
@@ -258,7 +298,7 @@ export const SettingsPage: React.FC = () => {
                   <div className="text-[#76777d] text-[11px]">Minimum variance triggering leak alarm</div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono font-bold text-[#0b1c30]">2.0 L/min</span>
+                  <span className="font-mono font-bold text-[#0b1c30]">0.5 L/min</span>
                   <span className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[10px] font-mono border border-slate-200">
                     Read only
                   </span>
@@ -271,7 +311,7 @@ export const SettingsPage: React.FC = () => {
                   <div className="text-[#76777d] text-[11px]">Continuous check interval before valve cutoff</div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono font-bold text-[#0b1c30]">5 seconds</span>
+                  <span className="font-mono font-bold text-[#0b1c30]">3 seconds</span>
                   <span className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[10px] font-mono border border-slate-200">
                     Read only
                   </span>
@@ -292,11 +332,12 @@ export const SettingsPage: React.FC = () => {
                 onClick={() => setPasswordModalOpen(false)}
                 className="text-slate-400 hover:text-slate-600 cursor-pointer"
               >
-                <span className="material-symbols-outlined text-[18px]">close</span>
+                <Icon name="close" className="text-[18px]" />
               </button>
             </div>
 
             <form onSubmit={handleChangePassword} className="p-6 space-y-4">
+              {passwordError && <p role="alert" className="text-xs text-red-700">{passwordError}</p>}
               <div className="space-y-1.5">
                 <label className="block text-xs font-semibold text-slate-700">Current Password</label>
                 <input
@@ -331,9 +372,10 @@ export const SettingsPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
+                  disabled={savingPassword}
                   className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded-lg cursor-pointer"
                 >
-                  Update Password
+                  {savingPassword ? 'Updating...' : 'Update Password'}
                 </button>
               </div>
             </form>

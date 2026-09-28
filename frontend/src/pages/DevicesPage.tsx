@@ -1,10 +1,12 @@
+import { Icon } from '../components/Icon';
 import React, { useState } from 'react';
 import { useDevices } from '../context/DeviceContext';
 import { useTelemetry } from '../context/TelemetryContext';
 import type { Device } from '../types';
 
 export const DevicesPage: React.FC = () => {
-  const { devices, addDevice, updateDevice, deleteDevice, toggleValve } = useDevices();
+  const { devices, addDevice, updateDevice, deleteDevice } = useDevices();
+  const { selectedDevice } = useDevices();
   const { inletFlow, outletFlow, flowDifference } = useTelemetry();
 
   const [addModalOpen, setAddModalOpen] = useState(false);
@@ -60,7 +62,7 @@ export const DevicesPage: React.FC = () => {
           }}
           className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#0f172a] hover:bg-slate-800 rounded-lg shadow-sm transition-colors cursor-pointer"
         >
-          <span className="material-symbols-outlined text-[16px]">add</span>
+          <Icon name="add" className="text-[16px]" />
           <span>Add Device</span>
         </button>
       </div>
@@ -68,7 +70,7 @@ export const DevicesPage: React.FC = () => {
       {/* Device Cards Grid */}
       <div className="grid grid-cols-1 gap-4">
         {devices.map((device) => {
-          const isArmed = device.valveState === 'OPEN';
+
           return (
             <div
               key={device.id}
@@ -77,9 +79,7 @@ export const DevicesPage: React.FC = () => {
               {/* Left Info */}
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-[#eff4ff] border border-[#c6c6cd]/40 flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-[#006398] text-[24px]">
-                    developer_board
-                  </span>
+                  <Icon name="developer_board" className="text-[#006398] text-[24px]" />
                 </div>
 
                 <div className="space-y-1">
@@ -105,7 +105,7 @@ export const DevicesPage: React.FC = () => {
                   </div>
 
                   <p className="text-xs text-[#76777d] flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[15px]">location_on</span>
+                    <Icon name="location_on" className="text-[15px]" />
                     <span>{device.location}</span>
                   </p>
 
@@ -113,19 +113,19 @@ export const DevicesPage: React.FC = () => {
                     <div>
                       Inlet:{' '}
                       <span className="font-semibold text-[#0b1c30]">
-                        {inletFlow.toFixed(1)} L/min
+                        {device.id === selectedDevice?.id ? inletFlow.toFixed(1) : '?'} L/min
                       </span>
                     </div>
                     <div>
                       Outlet:{' '}
                       <span className="font-semibold text-[#0b1c30]">
-                        {outletFlow.toFixed(1)} L/min
+                        {device.id === selectedDevice?.id ? outletFlow.toFixed(1) : '?'} L/min
                       </span>
                     </div>
                     <div>
                       Diff:{' '}
                       <span className="font-semibold text-[#069669]">
-                        +{flowDifference.toFixed(1)} L/min
+                        +{device.id === selectedDevice?.id ? flowDifference.toFixed(1) : '?'} L/min
                       </span>
                     </div>
                   </div>
@@ -134,21 +134,7 @@ export const DevicesPage: React.FC = () => {
 
               {/* Right Controls */}
               <div className="flex flex-wrap items-center gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-[#e5eeff]">
-                {/* Valve Toggle Action */}
-                <button
-                  type="button"
-                  onClick={() => toggleValve(device.id, isArmed ? 'CLOSED' : 'OPEN')}
-                  className={`px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
-                    isArmed
-                      ? 'bg-amber-50 text-amber-900 border border-amber-300 hover:bg-amber-100'
-                      : 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-xs'
-                  }`}
-                >
-                  <span className="material-symbols-outlined text-[16px]">
-                    {isArmed ? 'power_settings_new' : 'lock_open'}
-                  </span>
-                  <span>{isArmed ? 'Emergency Cutoff' : 'Open Valve (Arm)'}</span>
-                </button>
+                <span className="text-xs text-slate-500">Valve: {device.valveState} (hardware controlled)</span>
 
                 {/* Edit Button */}
                 <button
@@ -161,7 +147,7 @@ export const DevicesPage: React.FC = () => {
                   className="px-3 py-2 bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 rounded-lg text-xs font-medium transition-colors cursor-pointer"
                   title="Edit Device"
                 >
-                  <span className="material-symbols-outlined text-[16px]">edit</span>
+                  <Icon name="edit" className="text-[16px]" />
                 </button>
 
                 {/* Delete Button */}
@@ -175,7 +161,7 @@ export const DevicesPage: React.FC = () => {
                   className="px-3 py-2 bg-slate-50 border border-slate-200 text-rose-600 hover:bg-rose-50 rounded-lg text-xs font-medium transition-colors cursor-pointer"
                   title="Delete Device"
                 >
-                  <span className="material-symbols-outlined text-[16px]">delete</span>
+                  <Icon name="delete" className="text-[16px]" />
                 </button>
               </div>
             </div>
@@ -193,7 +179,7 @@ export const DevicesPage: React.FC = () => {
                 onClick={() => setAddModalOpen(false)}
                 className="text-slate-400 hover:text-slate-600 cursor-pointer"
               >
-                <span className="material-symbols-outlined text-[18px]">close</span>
+                <Icon name="close" className="text-[18px]" />
               </button>
             </div>
 
@@ -201,7 +187,7 @@ export const DevicesPage: React.FC = () => {
               <div className="p-6 space-y-4">
                 <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-xs space-y-2">
                   <div className="font-bold text-emerald-900 flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                    <Icon name="check_circle" className="text-[18px]" />
                     Device Provisioned Successfully!
                   </div>
                   <p className="text-emerald-800">
@@ -276,7 +262,7 @@ export const DevicesPage: React.FC = () => {
                 onClick={() => setEditingDevice(null)}
                 className="text-slate-400 hover:text-slate-600 cursor-pointer"
               >
-                <span className="material-symbols-outlined text-[18px]">close</span>
+                <Icon name="close" className="text-[18px]" />
               </button>
             </div>
 

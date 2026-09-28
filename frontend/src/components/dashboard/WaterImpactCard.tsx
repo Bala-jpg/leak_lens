@@ -1,3 +1,4 @@
+import { Icon } from '../Icon';
 import React from 'react';
 import { useTelemetry } from '../../context/TelemetryContext';
 
@@ -9,7 +10,7 @@ export const WaterImpactCard: React.FC = () => {
       <div>
         <div className="flex items-center justify-between pb-3 border-b border-[#e5eeff] mb-4">
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-[#006398] text-[20px]">water_drop</span>
+            <Icon name="water_drop" className="text-[#006398] text-[20px]" />
             <h3 className="text-xs font-bold text-[#0b1c30] uppercase font-mono tracking-wider">
               WATER IMPACT & SAVINGS
             </h3>
@@ -32,7 +33,7 @@ export const WaterImpactCard: React.FC = () => {
               <span className="text-xs font-mono text-[#76777d] font-medium">Liters</span>
             </div>
             <span className="text-[11px] text-[#76777d] mt-1">
-              Cumulative volume prior to auto-cutoffs
+              Estimated differential loss during detected incidents
             </span>
           </div>
 
@@ -48,15 +49,15 @@ export const WaterImpactCard: React.FC = () => {
               <span className="text-xs font-mono text-[#069669] font-medium">Liters</span>
             </div>
             <span className="text-[11px] text-[#069669] font-medium mt-1">
-              Estimated avoided loss from automated valve cutoffs
+              Assumes the detected leak continued for 2 hours
             </span>
           </div>
         </div>
       </div>
 
       <div className="px-4 py-3 bg-[#eff4ff] rounded-lg border border-[#c6c6cd]/30 flex items-center gap-2 text-[#45464d] text-xs">
-        <span className="material-symbols-outlined text-[#006398] text-[18px]">verified</span>
-        <span>Automatic cutoff prevents an average of 42 L of structural water loss per incident.</span>
+        <Icon name="verified" className="text-[#006398] text-[18px]" />
+        <span>Savings are estimates. Valve output does not measure physical closure.</span>
       </div>
     </section>
   );

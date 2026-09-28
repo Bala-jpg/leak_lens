@@ -1,3 +1,4 @@
+import { Icon } from '../components/Icon';
 import React, { useState } from 'react';
 import {
   ResponsiveContainer,
@@ -14,25 +15,30 @@ import {
 import { useTelemetry } from '../context/TelemetryContext';
 
 export const AnalyticsPage: React.FC = () => {
-  const { waterSaved30d, waterWasted30d, recentIncidents } = useTelemetry();
+  const { waterSaved30d, waterWasted30d, recentIncidents, flowHistory, cutoffLatency } = useTelemetry();
   const [activeTab, setActiveTab] = useState<'30d' | '90d' | '1y'>('30d');
 
-  const weeklyData = [
-    { name: 'W1 (Oct 1-7)', saved: 0, lost: 0.1, status: 'Nominal' },
-    { name: 'W2 (Oct 8-14)', saved: 42.0, lost: 1.05, status: 'Incident #LK-108' },
-    { name: 'W3 (Oct 15-21)', saved: 0, lost: 0.1, status: 'Nominal' },
-    { name: 'W4 (Oct 22-28)', saved: 42.6, lost: 0.72, status: 'Incident #LK-205' },
-  ];
-
-  const dailyUsageData = [
-    { day: 'Oct 1', normalFlow: 12.4, spikeCutoff: null },
-    { day: 'Oct 5', normalFlow: 12.6, spikeCutoff: null },
-    { day: 'Oct 10', normalFlow: 12.5, spikeCutoff: 15.8 },
-    { day: 'Oct 15', normalFlow: 12.3, spikeCutoff: null },
-    { day: 'Oct 20', normalFlow: 12.7, spikeCutoff: null },
-    { day: 'Oct 24', normalFlow: 12.5, spikeCutoff: 16.2 },
-    { day: 'Oct 28', normalFlow: 12.4, spikeCutoff: null },
-  ];
+  const days = activeTab === '30d' ? 30 : activeTab === '90d' ? 90 : 365;
+  const since = Date.now() - days * 86400000;
+  const periodIncidents = recentIncidents.filter((e) => new Date(e.detectedAt).getTime() >= since);
+  const weeklyMap = new Map<string, { name: string; saved: number; lost: number }>();
+  for (const incident of periodIncidents) {
+    const date = new Date(incident.detectedAt);
+    const week = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay()).toLocaleDateString();
+    const row = weeklyMap.get(week) || { name: week, saved: 0, lost: 0 };
+    row.saved += incident.estimatedWaterSavedL; row.lost += incident.waterWastedL;
+    weeklyMap.set(week, row);
+  }
+  const weeklyData = [...weeklyMap.values()];
+  const dailyMap = new Map<string, { day: string; normalFlow: number; spikeCutoff: number | null; count: number }>();
+  for (const reading of flowHistory.filter((r) => r.timestamp >= since)) {
+    const day = new Date(reading.timestamp).toLocaleDateString();
+    const row = dailyMap.get(day) || { day, normalFlow: 0, spikeCutoff: null, count: 0 };
+    row.normalFlow += reading.outletFlow; row.count++;
+    if (reading.difference >= 0.5) row.spikeCutoff = Math.max(row.spikeCutoff || 0, reading.inletFlow);
+    dailyMap.set(day, row);
+  }
+  const dailyUsageData = [...dailyMap.values()].map(({ day, normalFlow, spikeCutoff, count }) => ({ day, normalFlow: normalFlow / count, spikeCutoff }));
 
   return (
     <div className="w-full pb-8 max-w-7xl mx-auto space-y-5">
@@ -82,7 +88,7 @@ export const AnalyticsPage: React.FC = () => {
             <span className="text-[11px] font-mono uppercase text-[#76777d] font-semibold">
               Total Water Saved
             </span>
-            <span className="material-symbols-outlined text-[#069669] text-[20px]">eco</span>
+            <Icon name="eco" className="text-[#069669] text-[20px]" />
           </div>
           <div className="flex items-baseline gap-1.5 my-1">
             <span className="text-3xl font-bold font-mono text-[#069669] tabular-nums">
@@ -91,8 +97,8 @@ export const AnalyticsPage: React.FC = () => {
             <span className="font-mono text-sm text-[#069669] font-medium">Liters</span>
           </div>
           <span className="text-xs text-[#069669] font-medium flex items-center gap-1 mt-1">
-            <span className="material-symbols-outlined text-[14px]">trending_up</span>
-            +94.6% Cutoff Efficiency
+            <Icon name="trending_up" className="text-[14px]" />
+            Based on recorded incidents
           </span>
         </div>
 
@@ -101,7 +107,7 @@ export const AnalyticsPage: React.FC = () => {
             <span className="text-[11px] font-mono uppercase text-[#76777d] font-semibold">
               Actual Loss Incurred
             </span>
-            <span className="material-symbols-outlined text-[#ba1a1a] text-[20px]">water_damage</span>
+            <Icon name="water_damage" className="text-[#ba1a1a] text-[20px]" />
           </div>
           <div className="flex items-baseline gap-1.5 my-1">
             <span className="text-3xl font-bold font-mono text-[#ba1a1a] tabular-nums">
@@ -115,31 +121,31 @@ export const AnalyticsPage: React.FC = () => {
         <div className="bg-white border border-[#c6c6cd]/40 rounded-xl p-5 shadow-xs">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] font-mono uppercase text-[#76777d] font-semibold">
-              Avg Cutoff Response
+              Active incident confirmation
             </span>
-            <span className="material-symbols-outlined text-[#006398] text-[20px]">timer</span>
+            <Icon name="timer" className="text-[#006398] text-[20px]" />
           </div>
           <div className="flex items-baseline gap-1.5 my-1">
-            <span className="text-3xl font-bold font-mono text-[#0b1c30] tabular-nums">4.9</span>
+            <span className="text-3xl font-bold font-mono text-[#0b1c30] tabular-nums">{cutoffLatency == null ? '?' : cutoffLatency.toFixed(1)}</span>
             <span className="font-mono text-sm text-[#45464d] font-medium">seconds</span>
           </div>
           <span className="text-xs text-[#069669] font-medium mt-1">
-            Benchmark: 900s manual delay avoided
+            Hardware confirmation interval; not physical closure time
           </span>
         </div>
 
         <div className="bg-white border border-[#c6c6cd]/40 rounded-xl p-5 shadow-xs">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] font-mono uppercase text-[#76777d] font-semibold">
-              Structural Loss Avoided
+              Estimated Loss Avoided
             </span>
-            <span className="material-symbols-outlined text-[#006398] text-[20px]">shield</span>
+            <Icon name="shield" className="text-[#006398] text-[20px]" />
           </div>
           <div className="flex items-baseline gap-1.5 my-1">
-            <span className="text-3xl font-bold font-mono text-[#0b1c30] tabular-nums">~126.6</span>
+            <span className="text-3xl font-bold font-mono text-[#0b1c30] tabular-nums">{waterSaved30d}</span>
             <span className="font-mono text-sm text-[#45464d] font-medium">Liters</span>
           </div>
-          <span className="text-xs text-[#76777d] mt-1">Estimated avoided structural damage</span>
+          <span className="text-xs text-[#76777d] mt-1">Assumes two hours of continued leakage</span>
         </div>
       </div>
 
@@ -186,8 +192,8 @@ export const AnalyticsPage: React.FC = () => {
           </div>
 
           <div className="pt-3 border-t border-[#e5eeff] flex items-center justify-between text-xs font-mono text-[#76777d]">
-            <span>Calculated baseline response time: 900s</span>
-            <span className="text-[#069669] font-semibold">Cutoff efficiency: +94.6%</span>
+            <span>Savings assumption: 2 hours of continued leakage</span>
+            <span className="text-[#069669] font-semibold">Estimated values</span>
           </div>
         </div>
 
@@ -197,10 +203,10 @@ export const AnalyticsPage: React.FC = () => {
             <div className="flex items-center justify-between pb-2 mb-3 border-b border-[#e5eeff]">
               <div>
                 <h2 className="text-sm font-bold text-[#0b1c30] uppercase font-mono tracking-wider">
-                  Daily Water Usage & Volumetric Balance
+                  Recent Daily Average Flow
                 </h2>
                 <p className="text-xs text-[#76777d]">
-                  Daily net throughput with tagged automated isolation events
+                  Average of available recent readings; not daily volume
                 </p>
               </div>
             </div>
@@ -242,8 +248,8 @@ export const AnalyticsPage: React.FC = () => {
           </div>
 
           <div className="pt-3 border-t border-[#e5eeff] flex items-center justify-between text-xs font-mono text-[#76777d]">
-            <span>System baseline: 12.5 L/min continuous nominal rate</span>
-            <span className="text-[#006398] font-semibold">2 Anomalies Detected</span>
+            <span>Recent telemetry only</span>
+            <span className="text-[#006398] font-semibold">Sensor flow in L/min</span>
           </div>
         </div>
       </div>
@@ -259,8 +265,8 @@ export const AnalyticsPage: React.FC = () => {
               <tr className="border-b border-[#c6c6cd]/40 text-[#76777d] uppercase text-[10px]">
                 <th className="py-2.5 pr-3">Incident ID</th>
                 <th className="py-2.5 px-3">Device Location</th>
-                <th className="py-2.5 px-3">Detected Time</th>
-                <th className="py-2.5 px-3">Cutoff Latency</th>
+                <th className="py-2.5 px-3">First Observed</th>
+                <th className="py-2.5 px-3">Output Confirmation Interval</th>
                 <th className="py-2.5 px-3">Water Wasted</th>
                 <th className="py-2.5 px-3">Estimated Saved</th>
                 <th className="py-2.5 pl-3 text-right">Status</th>
@@ -273,8 +279,9 @@ export const AnalyticsPage: React.FC = () => {
                   <td className="py-3 px-3 text-[#0b1c30]">{inc.location || 'Zone B Risers'}</td>
                   <td className="py-3 px-3 text-[#76777d]">
                     {new Date(inc.detectedAt).toLocaleDateString()} {new Date(inc.detectedAt).toLocaleTimeString()}
+                    <div className="text-[10px]">{inc.detectionOccurredAt ? `Estimated occurrence: ${new Date(inc.detectionOccurredAt).toLocaleString()}` : 'Occurrence time unknown'}</div>
                   </td>
-                  <td className="py-3 px-3 text-[#45464d]">{inc.cutoffLatencySec || 4.8}s</td>
+                    <td className="py-3 px-3 text-[#45464d]">{inc.cutoffLatencySec != null ? inc.cutoffLatencySec.toFixed(1) : '—'}s</td>
                   <td className="py-3 px-3 text-[#ba1a1a] font-semibold">{inc.waterWastedL} L</td>
                   <td className="py-3 px-3 text-[#069669] font-bold">+{inc.estimatedWaterSavedL} L</td>
                   <td className="py-3 pl-3 text-right">

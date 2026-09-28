@@ -4,6 +4,7 @@ export type LeakStatus = 'ACTIVE' | 'CUTOFF' | 'RESOLVED';
 export type NotificationType =
   | 'LEAK_DETECTED'
   | 'VALVE_CUTOFF'
+  | 'LEAK_CUTOFF'
   | 'DEVICE_OFFLINE'
   | 'LEAK_RESOLVED'
   | 'SYSTEM_ALERT';
@@ -29,6 +30,10 @@ export interface Device {
 }
 
 export interface SensorReading {
+  bootId?: string | null;
+  sampledUptimeMs?: number | null;
+  receivedAt?: string | null;
+  measurementTimeBasis?: 'DEVICE_REPORTED' | 'AGE_ESTIMATE' | null;
   id?: number | string;
   deviceId: string;
   inletFlowLpm: number;
@@ -42,6 +47,11 @@ export interface SensorReading {
 }
 
 export interface LeakEvent {
+  firstObservedAt?: string;
+  originBootId?: string | null;
+  detectionOccurredAt?: string | null;
+  cutoffOccurredAt?: string | null;
+  eventTimeBasis?: 'UPTIME_ESTIMATE' | 'UNKNOWN';
   id: string;
   deviceId: string;
   deviceName?: string;
@@ -85,7 +95,6 @@ export interface LeakStatsSummary {
   activeLeaks: number;
   totalWaterWastedL: number;
   totalWaterSavedL: number;
-  avgCutoffLatencySec: number;
-  cutoffEfficiencyPercent: number;
+  avgCutoffLatencySec: number | null;
+  cutoffEfficiencyPercent: number | null;
 }
-

@@ -1,3 +1,4 @@
+import { validateId } from '../middleware/validateId';
 import { Router } from 'express';
 import {
   createDevice,
@@ -10,6 +11,7 @@ import {
 import { authenticateUser } from '../middleware/auth.middleware';
 
 const router = Router();
+router.param('id', validateId);
 
 router.use(authenticateUser);
 

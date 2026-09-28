@@ -18,7 +18,8 @@ COPY package*.json ./
 RUN npm ci --only=production
 
 COPY --from=builder /app/dist ./dist
+COPY src/db/schema.sql ./dist/db/schema.sql
 
 EXPOSE 5000
 
-CMD ["node", "dist/server.js"]
+CMD ["sh", "-c", "node dist/db/migrate.js && node dist/server.js"]

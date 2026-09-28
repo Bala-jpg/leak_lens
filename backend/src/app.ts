@@ -13,7 +13,13 @@ import notificationRoutes from './routes/notification.routes';
 const app = express();
 
 app.use(cors({
-  origin: env.FRONTEND_URL,
+  origin: (requestOrigin, callback) => {
+    if (!requestOrigin) return callback(null, true);
+    if (env.ALLOWED_ORIGINS.includes(requestOrigin) || env.NODE_ENV === 'development') {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
 }));
 

@@ -2,9 +2,9 @@ import React from 'react';
 import { useTelemetry } from '../../context/TelemetryContext';
 
 export const FlowMetricsGrid: React.FC = () => {
-  const { inletFlow, outletFlow, flowDifference, valveState, isLeakActive } = useTelemetry();
+  const { inletFlow, outletFlow, flowDifference, valveState, isLeakActive, hasReading } = useTelemetry();
 
-  const isDiffHigh = flowDifference > 0.5 || isLeakActive;
+  const isDiffHigh = Math.abs(flowDifference) >= 0.5 || isLeakActive;
 
   return (
     <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
@@ -20,7 +20,7 @@ export const FlowMetricsGrid: React.FC = () => {
         </div>
         <div className="flex items-baseline gap-1.5 my-1">
           <span className="text-3xl font-bold font-mono text-[#0b1c30] tabular-nums">
-            {inletFlow.toFixed(1)}
+            {hasReading ? inletFlow.toFixed(1) : '?'}
           </span>
           <span className="font-mono text-sm text-[#45464d] font-medium">L/min</span>
         </div>
@@ -41,7 +41,7 @@ export const FlowMetricsGrid: React.FC = () => {
         </div>
         <div className="flex items-baseline gap-1.5 my-1">
           <span className="text-3xl font-bold font-mono text-[#0b1c30] tabular-nums">
-            {outletFlow.toFixed(1)}
+            {hasReading ? outletFlow.toFixed(1) : '?'}
           </span>
           <span className="font-mono text-sm text-[#45464d] font-medium">L/min</span>
         </div>
@@ -72,7 +72,7 @@ export const FlowMetricsGrid: React.FC = () => {
               isDiffHigh ? 'text-[#ba1a1a]' : 'text-[#069669]'
             }`}
           >
-            +{flowDifference.toFixed(1)}
+            {hasReading ? flowDifference.toFixed(1) : '?'}
           </span>
           <span className="font-mono text-sm text-[#45464d] font-medium">L/min</span>
         </div>
@@ -85,17 +85,17 @@ export const FlowMetricsGrid: React.FC = () => {
           ) : (
             <span className="text-[#069669] flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-[#069669]"></span>
-              Balanced / Normal Range (&lt; 0.5 L/min)
+              {hasReading ? 'Difference magnitude below 0.5 L/min' : 'Awaiting sensor readings'}
             </span>
           )}
         </div>
       </div>
 
-      {/* Card 4: Valve Status */}
+      {/* Card 4: Valve Output */}
       <div className="bg-white border border-[#c6c6cd]/40 rounded-xl p-5 shadow-xs flex flex-col justify-between">
         <div className="flex items-start justify-between mb-2">
           <span className="text-[11px] uppercase text-[#45464d] font-semibold tracking-wider font-mono">
-            Valve Status
+            Valve Output
           </span>
           <span
             className={`flex items-center gap-1 text-[11px] font-mono uppercase font-semibold ${
@@ -107,7 +107,7 @@ export const FlowMetricsGrid: React.FC = () => {
                 valveState === 'OPEN' ? 'bg-[#069669]' : 'bg-[#ba1a1a]'
               }`}
             ></span>
-            {valveState === 'OPEN' ? 'Armed' : 'Cutoff'}
+            {valveState === 'OPEN' ? 'Armed' : valveState === 'CLOSED' ? 'Closed output' : 'Unknown'}
           </span>
         </div>
         <div className="flex items-baseline gap-2 my-1">
@@ -125,11 +125,11 @@ export const FlowMetricsGrid: React.FC = () => {
                 : 'bg-red-100 text-red-700'
             }`}
           >
-            {valveState === 'OPEN' ? '100% Stroke' : '0% Stroke (Sealed)'}
+            {hasReading ? 'Reported output' : 'Awaiting telemetry'}
           </span>
         </div>
         <div className="pt-2 border-t border-[#e5eeff] text-[#45464d] text-xs">
-          {valveState === 'OPEN' ? 'Automatic shutoff armed' : 'Emergency isolation active'}
+          Hardware output state; physical position is not measured
         </div>
       </div>
     </section>

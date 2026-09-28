@@ -1,3 +1,4 @@
+import { Icon } from '../Icon';
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useNotifications } from '../../context/NotificationContext';
@@ -54,19 +55,19 @@ export const Sidebar: React.FC = () => {
         {/* Navigation Items */}
         <nav className="flex flex-col gap-1 p-3 mt-1 text-[13px]">
           <NavLink to="/" end className={navItemClass}>
-            <span className="material-symbols-outlined text-[20px]">grid_view</span>
+            <Icon name="grid_view" className="text-[20px]" />
             <span>Overview</span>
           </NavLink>
 
           <NavLink to="/analytics" className={navItemClass}>
-            <span className="material-symbols-outlined text-[20px]">monitoring</span>
+            <Icon name="monitoring" className="text-[20px]" />
             <span>Analytics</span>
           </NavLink>
 
           <NavLink to="/notifications" className={navItemClass}>
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-[20px]">notifications</span>
+                <Icon name="notifications" className="text-[20px]" />
                 <span>Notifications</span>
               </div>
               {unreadCount > 0 && (
@@ -78,12 +79,12 @@ export const Sidebar: React.FC = () => {
           </NavLink>
 
           <NavLink to="/devices" className={navItemClass}>
-            <span className="material-symbols-outlined text-[20px]">developer_board</span>
+            <Icon name="developer_board" className="text-[20px]" />
             <span>Devices</span>
           </NavLink>
 
           <NavLink to="/settings" className={navItemClass}>
-            <span className="material-symbols-outlined text-[20px]">tune</span>
+            <Icon name="tune" className="text-[20px]" />
             <span>Profile / Settings</span>
           </NavLink>
         </nav>
@@ -91,31 +92,11 @@ export const Sidebar: React.FC = () => {
 
       {/* Bottom Section: Edge Gateway & Sign Out */}
       <div className="flex flex-col border-t border-[#c6c6cd]/30 p-3 bg-white">
-        <div className="p-3 bg-[#eff4ff] border border-[#c6c6cd]/40 rounded-lg flex flex-col gap-1.5 mb-2">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-semibold text-[#45464d] uppercase tracking-wider font-mono">
-              Edge Gateway
-            </span>
-            <span className="flex items-center gap-1 text-[11px] text-[#069669] font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#069669] animate-pulse"></span>
-              Online
-            </span>
-          </div>
-          <div className="flex items-center justify-between text-[#0b1c30] text-[12px] font-mono">
-            <span className="text-[#76777d]">Latency</span>
-            <span className="font-semibold">18ms</span>
-          </div>
-          <div className="flex items-center justify-between text-[#0b1c30] text-[12px] font-mono">
-            <span className="text-[#76777d]">Uptime</span>
-            <span className="font-semibold">99.98%</span>
-          </div>
-        </div>
-
         <button
           onClick={handleSignOut}
           className="flex items-center gap-2.5 px-3 py-2 text-[#45464d] hover:text-[#ba1a1a] hover:bg-[#ffdad6]/40 rounded-lg transition-colors text-[13px] font-medium w-full text-left"
         >
-          <span className="material-symbols-outlined text-[18px]">logout</span>
+          <Icon name="logout" className="text-[18px]" />
           <span>Sign Out</span>
         </button>
       </div>

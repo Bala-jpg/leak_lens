@@ -5,6 +5,7 @@ import { hashPassword, hashDeviceKey } from '../utils/crypto';
 export const seedDatabase = async () => {
   console.log('🌱 Starting database seeding...');
   try {
+    if (process.env.ALLOW_DESTRUCTIVE_SEED !== 'yes') throw new Error('Seed deletes all application data. Set ALLOW_DESTRUCTIVE_SEED=yes only for a disposable database.');
     // 1. Ensure migrations are applied first
     await runMigrations();
 

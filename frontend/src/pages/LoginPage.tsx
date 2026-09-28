@@ -1,27 +1,29 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 
 export const LoginPage: React.FC = () => {
-  const { login, demoLogin } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState('marcus.chen@leaklens.io');
-  const [password, setPassword] = useState('password123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    await login(email, password);
-    setIsSubmitting(false);
-    navigate('/');
+    try { await login(email, password); navigate('/'); }
+    catch (cause) {
+      setError(axios.isAxiosError(cause) && cause.response
+        ? 'Email or password is incorrect.'
+        : 'Cannot connect right now. Please try again shortly.');
+    }
+    finally { setIsSubmitting(false); }
   };
 
-  const handleDemoAccess = () => {
-    demoLogin();
-    navigate('/');
-  };
 
   return (
     <div className="min-h-screen w-full bg-[#f8f9ff] flex items-center justify-center p-4">
@@ -51,29 +53,7 @@ export const LoginPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Demo Fast Track Button */}
-        <div className="p-3 bg-[#eff4ff] border border-[#c6c6cd]/40 rounded-xl space-y-2">
-          <div className="text-xs font-semibold text-[#006398] flex items-center gap-1.5">
-            <span className="material-symbols-outlined text-[16px]">bolt</span>
-            <span>Quick Demo Fast Track</span>
-          </div>
-          <p className="text-[11px] text-[#45464d]">
-            Experience the complete LeakLens dashboard immediately with pre-configured telemetry and simulated sensors:
-          </p>
-          <button
-            type="button"
-            onClick={handleDemoAccess}
-            className="w-full py-2 bg-[#006398] hover:bg-[#00476e] text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
-          >
-            Launch Demo Workspace
-          </button>
-        </div>
-
-        <div className="flex items-center gap-3 text-xs text-[#76777d]">
-          <div className="flex-1 h-px bg-[#e5eeff]"></div>
-          <span>Or sign in with credentials</span>
-          <div className="flex-1 h-px bg-[#e5eeff]"></div>
-        </div>
+        {error && <p role="alert" className="text-xs text-red-700">{error}</p>}
 
         {/* Credentials Form */}
         <form onSubmit={handleSubmit} className="space-y-4">

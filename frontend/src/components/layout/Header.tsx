@@ -1,3 +1,4 @@
+import { Icon } from '../Icon';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDevices } from '../../context/DeviceContext';
@@ -7,7 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 
 export const Header: React.FC = () => {
   const { devices, selectedDevice, setSelectedDevice } = useDevices();
-  const { isLeakActive, lastSyncedAgo, refreshTelemetry, triggerLeakSimulation, resolveLeak } = useTelemetry();
+  const { isLeakActive, lastSyncedAgo, refreshTelemetry, isOnline, hasReading } = useTelemetry();
   const { unreadCount } = useNotifications();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -31,11 +32,11 @@ export const Header: React.FC = () => {
             onClick={() => setDeviceDropdownOpen(!deviceDropdownOpen)}
             className="flex items-center gap-2 px-3 py-1.5 bg-[#eff4ff] border border-[#c6c6cd]/50 rounded-lg text-xs font-semibold text-[#0b1c30] hover:bg-[#e5eeff] transition-colors"
           >
-            <span className="material-symbols-outlined text-[#006398] text-[18px]">domain</span>
+            <Icon name="domain" className="text-[#006398] text-[18px]" />
             <span className="truncate max-w-[220px] sm:max-w-[320px]">
               {selectedDevice?.location || 'Main Plant — Bldg 4 (Zone B Risers)'}
             </span>
-            <span className="material-symbols-outlined text-[#76777d] text-[16px]">expand_more</span>
+            <Icon name="expand_more" className="text-[#76777d] text-[16px]" />
           </button>
 
           {deviceDropdownOpen && (
@@ -72,50 +73,31 @@ export const Header: React.FC = () => {
         {/* Device Status Tag */}
         <div className="hidden xl:flex items-center gap-3 border-l border-[#c6c6cd]/40 pl-4 text-xs font-mono">
           <div className="flex items-center gap-1.5 text-[#45464d]">
-            <span className="text-[#0b1c30] font-semibold">{selectedDevice?.id || 'LLS-942-B4'}</span>
+            <span className="text-[#0b1c30] font-semibold">{selectedDevice?.id || 'No device'}</span>
           </div>
           {isLeakActive ? (
             <div className="flex items-center gap-1.5 text-[#ba1a1a] font-semibold">
               <span className="w-2 h-2 rounded-full bg-[#ba1a1a] animate-ping"></span>
-              <span>Leak Cutoff Active</span>
+              <span>Leak Incident Active</span>
             </div>
           ) : (
             <div className="flex items-center gap-1.5 text-[#069669] font-medium">
               <span className="w-1.5 h-1.5 rounded-full bg-[#069669] status-dot-pulse"></span>
-              <span>Online</span>
+              <span>{isOnline ? 'ONLINE' : 'OFFLINE'}</span>
             </div>
           )}
           <div className="text-[#76777d] hidden 2xl:block">
-            <span>MQTT/TLS</span>
+            <span>HTTP / WebSocket</span>
           </div>
           <div className="text-[#76777d] flex items-center gap-1">
-            <span className="material-symbols-outlined text-[14px]">schedule</span>
-            <span>{lastSyncedAgo}s ago</span>
+            <Icon name="schedule" className="text-[14px]" />
+            <span>{hasReading ? `${lastSyncedAgo}s ago` : 'No readings'}</span>
           </div>
         </div>
       </div>
 
       {/* Right Header Utilities */}
       <div className="flex items-center gap-3">
-        {/* Quick Simulation State Toggle */}
-        <div className="hidden sm:flex items-center bg-[#eff4ff] p-1 rounded-lg border border-[#c6c6cd]/40 text-xs">
-          <button
-            type="button"
-            onClick={isLeakActive ? () => resolveLeak() : triggerLeakSimulation}
-            className={`px-2.5 py-1 rounded font-semibold transition-colors flex items-center gap-1.5 ${
-              isLeakActive
-                ? 'bg-rose-600 text-white shadow-xs'
-                : 'bg-white text-[#0b1c30] hover:bg-slate-50 border border-slate-200'
-            }`}
-            title="Toggle simulated leak incident to view active leak alert state"
-          >
-            <span className="material-symbols-outlined text-[15px]">
-              {isLeakActive ? 'warning' : 'science'}
-            </span>
-            <span>{isLeakActive ? 'Active Leak Mode' : 'Simulate Leak'}</span>
-          </button>
-        </div>
-
         {/* Refresh button */}
         <button
           onClick={handleRefresh}
@@ -123,9 +105,7 @@ export const Header: React.FC = () => {
           title="Refresh Telemetry"
           type="button"
         >
-          <span className={`material-symbols-outlined text-[18px] transition-transform duration-500 ${isRotating ? 'rotate-180 text-[#006398]' : ''}`}>
-            refresh
-          </span>
+          <Icon name="refresh" className={`text-[18px] transition-transform duration-500 ${isRotating ? 'rotate-180 text-[#006398]' : ''}`} />
         </button>
 
         {/* Notification Bell */}
@@ -135,7 +115,7 @@ export const Header: React.FC = () => {
           title="Notifications"
           type="button"
         >
-          <span className="material-symbols-outlined text-[18px]">notifications</span>
+          <Icon name="notifications" className="text-[18px]" />
           {unreadCount > 0 && (
             <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#ba1a1a] ring-2 ring-white animate-pulse"></span>
           )}

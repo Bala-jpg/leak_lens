@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ResponsiveContainer,
   LineChart,
@@ -9,10 +9,52 @@ import {
   Tooltip,
 } from 'recharts';
 import { useTelemetry } from '../../context/TelemetryContext';
+import { useDevices } from '../../context/DeviceContext';
+import { telemetryApi } from '../../api';
+import { socket } from '../../api/socket';
 
 export const FlowChart: React.FC = () => {
-  const { flowHistory, inletFlow, outletFlow } = useTelemetry();
+  const { inletFlow, outletFlow } = useTelemetry();
+  const { selectedDevice } = useDevices();
+  const deviceId = selectedDevice?.id;
   const [range, setRange] = useState<'5m' | '1h' | '24h'>('5m');
+  const [history, setHistory] = useState<Awaited<ReturnType<typeof telemetryApi.getFlowWindow>> | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    let pending = false;
+    let refreshTimer: ReturnType<typeof setTimeout> | undefined;
+    setHistory(null);
+    setError(false);
+    setLoading(!!deviceId);
+    if (!deviceId) return () => controller.abort();
+    const refresh = async () => {
+      if (pending || controller.signal.aborted) return;
+      pending = true;
+      try {
+        const result = await telemetryApi.getFlowWindow(deviceId, range, controller.signal);
+        if (!controller.signal.aborted) { setHistory(result); setError(false); }
+      } catch {
+        if (!controller.signal.aborted) setError(true);
+      } finally {
+        pending = false;
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    };
+    const onReading = (data: { deviceId: string }) => {
+      if (data.deviceId !== deviceId || refreshTimer) return;
+      refreshTimer = setTimeout(() => { refreshTimer = undefined; void refresh(); }, 500);
+    };
+    void refresh();
+    const timer = setInterval(() => void refresh(), 10000);
+    socket.on('telemetry_update', onReading);
+    return () => {
+      controller.abort(); clearInterval(timer); clearTimeout(refreshTimer);
+      socket.off('telemetry_update', onReading);
+    };
+  }, [deviceId, range]);
 
   return (
     <section className="w-full bg-white rounded-xl border border-[#c6c6cd]/40 shadow-xs p-5 mb-4">
@@ -24,7 +66,7 @@ export const FlowChart: React.FC = () => {
               Live Water Flow (Inlet vs Outlet)
             </h2>
             <span className="text-[11px] font-mono font-semibold bg-[#85f8c4]/30 text-[#069669] px-2 py-0.5 rounded">
-              Realtime 3s
+              {range === '24h' ? '5-minute averages' : range === '1h' ? '10-second averages' : 'Live readings'}
             </span>
           </div>
           <p className="text-xs text-[#76777d] mt-0.5">
@@ -47,6 +89,7 @@ export const FlowChart: React.FC = () => {
           <div className="inline-flex bg-[#eff4ff] p-0.5 rounded text-xs font-semibold">
             <button
               onClick={() => setRange('5m')}
+              aria-pressed={range === '5m'}
               className={`px-2.5 py-1 rounded transition-colors cursor-pointer ${
                 range === '5m'
                   ? 'bg-white shadow-xs text-[#0b1c30]'
@@ -58,6 +101,7 @@ export const FlowChart: React.FC = () => {
             </button>
             <button
               onClick={() => setRange('1h')}
+              aria-pressed={range === '1h'}
               className={`px-2.5 py-1 rounded transition-colors cursor-pointer ${
                 range === '1h'
                   ? 'bg-white shadow-xs text-[#0b1c30]'
@@ -69,6 +113,7 @@ export const FlowChart: React.FC = () => {
             </button>
             <button
               onClick={() => setRange('24h')}
+              aria-pressed={range === '24h'}
               className={`px-2.5 py-1 rounded transition-colors cursor-pointer ${
                 range === '24h'
                   ? 'bg-white shadow-xs text-[#0b1c30]'
@@ -83,12 +128,22 @@ export const FlowChart: React.FC = () => {
       </div>
 
       {/* Chart Canvas */}
+      {error && <p role="alert" className="text-xs text-red-600">Could not update flow history. Retrying automatically.</p>}
       <div className="h-72 w-full select-none pt-2">
+        {loading || !history?.points.length ? (
+          <div role="status" className="h-full flex items-center justify-center text-sm text-[#76777d]">
+            {loading ? 'Loading flow history...' : !deviceId ? 'Select a device to view flow history.' : error ? 'Flow history is unavailable.' : 'No readings in this time range.'}
+          </div>
+        ) : (
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={flowHistory} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
+          <LineChart data={history.points} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#eff4ff" vertical={false} />
             <XAxis
-              dataKey="time"
+              dataKey="timestamp"
+              type="number"
+              scale="time"
+              domain={[Date.parse(history.from), Date.parse(history.to)]}
+              tickFormatter={(v) => new Date(v).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', ...(range === '5m' ? { second: '2-digit' } : {}) })}
               stroke="#76777d"
               fontSize={11}
               tickLine={false}
@@ -97,12 +152,13 @@ export const FlowChart: React.FC = () => {
             <YAxis
               stroke="#76777d"
               fontSize={11}
-              domain={[0, 16]}
+              domain={[0, 'auto']}
               tickLine={false}
               axisLine={{ stroke: '#e5eeff' }}
-              tickFormatter={(v) => `${v}L`}
+              tickFormatter={(v) => `${v}`}
             />
             <Tooltip
+              labelFormatter={(v) => new Date(Number(v)).toLocaleString()}
               contentStyle={{
                 backgroundColor: '#ffffff',
                 borderColor: '#c6c6cd',
@@ -120,7 +176,8 @@ export const FlowChart: React.FC = () => {
               dataKey="inletFlow"
               stroke="#006398"
               strokeWidth={2.5}
-              dot={false}
+              dot={history.points.length === 1}
+              isAnimationActive={false}
               activeDot={{ r: 5, fill: '#006398', stroke: '#fff', strokeWidth: 2 }}
             />
             <Line
@@ -128,11 +185,13 @@ export const FlowChart: React.FC = () => {
               dataKey="outletFlow"
               stroke="#5bb8fe"
               strokeWidth={2.5}
-              dot={false}
+              dot={history.points.length === 1}
+              isAnimationActive={false}
               activeDot={{ r: 5, fill: '#5bb8fe', stroke: '#fff', strokeWidth: 2 }}
             />
           </LineChart>
         </ResponsiveContainer>
+        )}
       </div>
     </section>
   );

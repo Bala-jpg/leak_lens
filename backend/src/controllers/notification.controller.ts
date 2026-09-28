@@ -15,11 +15,30 @@ export const getNotifications = async (req: AuthenticatedRequest, res: Response,
       [userId]
     );
 
+    const notifications = result.rows.map((n) => ({
+      id: n.id,
+      userId: n.user_id,
+      deviceId: n.device_id,
+      deviceName: n.device_name,
+      leakEventId: n.leak_event_id,
+      type: n.type,
+      message: n.message,
+      readStatus: n.read_status,
+      createdAt: n.created_at,
+      user_id: n.user_id,
+      device_id: n.device_id,
+      device_name: n.device_name,
+      leak_event_id: n.leak_event_id,
+      read_status: n.read_status,
+      created_at: n.created_at,
+    }));
+
     return res.status(200).json({
       status: 'success',
       data: {
-        notifications: result.rows,
+        notifications,
       },
+      notifications,
     });
   } catch (error) {
     next(error);
@@ -46,11 +65,18 @@ export const markAsRead = async (req: AuthenticatedRequest, res: Response, next:
       });
     }
 
+    const notification = {
+      id: result.rows[0].id,
+      readStatus: result.rows[0].read_status,
+      read_status: result.rows[0].read_status,
+    };
+
     return res.status(200).json({
       status: 'success',
       data: {
-        notification: result.rows[0],
+        notification,
       },
+      notification,
     });
   } catch (error) {
     next(error);

@@ -8,6 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+stitch_designs
 dist
 dist-ssr
 *.local
@@ -22,3 +23,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+firmware/LeakLens/secrets.h
+
+.env
+backend/.env
+.tools/
+firmware/build/

@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-leaklens_db}
       POSTGRES_USER: ${POSTGRES_USER:-leaklens_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-leaklens_pass}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
     ports:
       - "5433:5432"
     volumes:
@@ -27,17 +27,29 @@ services:
       - "5000:5000"
     environment:
       PORT: ${PORT:-5000}
-      DATABASE_URL: postgresql://${POSTGRES_USER:-leaklens_user}:${POSTGRES_PASSWORD:-leaklens_pass}@postgres:5432/${POSTGRES_DB:-leaklens_db}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-leaklens_user}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-leaklens_db}
       POSTGRES_DB: ${POSTGRES_DB:-leaklens_db}
       POSTGRES_USER: ${POSTGRES_USER:-leaklens_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-leaklens_pass}
-      JWT_SECRET: ${JWT_SECRET:-super_secret_jwt_key_12345}
-      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-super_secret_refresh_jwt_key_67890}
-      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
-      DEVICE_API_KEY_PEPPER: ${DEVICE_API_KEY_PEPPER:-leaklens_device_pepper_secret}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      NODE_ENV: production
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?Set JWT_REFRESH_SECRET in .env}
+      FRONTEND_URL: http://localhost:8080,${FRONTEND_URL:-http://localhost:5173}
+      DEVICE_API_KEY_PEPPER: ${DEVICE_API_KEY_PEPPER:?Set DEVICE_API_KEY_PEPPER in .env}
     depends_on:
       postgres:
         condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: leaklens_frontend
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:

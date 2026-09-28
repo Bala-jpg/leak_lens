@@ -11,7 +11,7 @@ const envSchema = z.object({
   POSTGRES_PASSWORD: z.string().optional(),
   JWT_SECRET: z.string().default('default_jwt_secret'),
   JWT_REFRESH_SECRET: z.string().default('default_jwt_refresh_secret'),
-  FRONTEND_URL: z.string().default('http://localhost:3000'),
+  FRONTEND_URL: z.string().default('http://localhost:5173,http://localhost:3000'),
   DEVICE_API_KEY_PEPPER: z.string().default('default_pepper_secret'),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 });
@@ -23,4 +23,13 @@ if (!_env.success) {
   process.exit(1);
 }
 
-export const env = _env.data;
+const parsed = _env.data;
+if (parsed.NODE_ENV === 'production' && [parsed.JWT_SECRET, parsed.JWT_REFRESH_SECRET, parsed.DEVICE_API_KEY_PEPPER].some((value) => value.startsWith('default_'))) {
+  throw new Error('Production secrets must be configured');
+}
+const allowedOrigins = parsed.FRONTEND_URL.split(',').map((url) => url.trim());
+
+export const env = {
+  ...parsed,
+  ALLOWED_ORIGINS: allowedOrigins,
+};

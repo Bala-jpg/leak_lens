@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import pool from '../config/db.js';
+import pool from '../config/db';
 
 export const runMigrations = async () => {
   console.log('🔄 Running database migrations...');

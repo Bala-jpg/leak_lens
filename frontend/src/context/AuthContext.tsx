@@ -10,7 +10,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   demoLogin: () => void;
   logout: () => void;
-  updateProfile: (name: string, email: string) => void;
+  updateProfile: (name: string, email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -18,7 +18,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(() => {
     const saved = localStorage.getItem('leaklens_user');
-    return saved ? JSON.parse(saved) : INITIAL_USER;
+    return localStorage.getItem('leaklens_token') && saved ? JSON.parse(saved) : null;
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -37,15 +37,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(data.user);
       localStorage.setItem('leaklens_token', data.accessToken);
       localStorage.setItem('leaklens_refresh_token', data.refreshToken);
-    } catch {
-      // Fallback demo login if backend is unreachable
-      const fallbackUser: User = {
-        id: 'usr-101',
-        name: email.split('@')[0] || 'Marcus Chen',
-        email,
-        role: 'Lead Facility Eng.',
-      };
-      setUser(fallbackUser);
     } finally {
       setIsLoading(false);
     }
@@ -61,10 +52,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('leaklens_refresh_token');
   };
 
-  const updateProfile = (name: string, email: string) => {
-    if (user) {
-      setUser({ ...user, name, email });
-    }
+  const updateProfile = async (name: string, email: string) => {
+    setUser(await authApi.updateMe(name, email));
   };
 
   return (

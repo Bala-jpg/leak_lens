@@ -1,3 +1,4 @@
+import { Icon } from '../Icon';
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useTelemetry } from '../../context/TelemetryContext';
@@ -10,7 +11,7 @@ export const RecentIncidentsTable: React.FC = () => {
       <div>
         <div className="flex items-center justify-between pb-3 border-b border-[#e5eeff] mb-4">
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-[#006398] text-[20px]">history</span>
+            <Icon name="history" className="text-[#006398] text-[20px]" />
             <h3 className="text-xs font-bold text-[#0b1c30] uppercase font-mono tracking-wider">
               RECENT INCIDENT LOG
             </h3>
@@ -29,14 +30,14 @@ export const RecentIncidentsTable: React.FC = () => {
               {recentIncidents.slice(0, 3).map((item) => (
                 <tr key={item.id} className="hover:bg-[#eff4ff]/60 transition-colors">
                   <td className="py-2.5 pr-2 whitespace-nowrap text-[#0b1c30] font-medium">
-                    {new Date(item.detectedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })},{' '}
+                    Observed: Observed: {new Date(item.detectedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })},{' '}
                     {new Date(item.detectedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </td>
                   <td className="py-2.5 px-2 whitespace-nowrap text-[#76777d]">
                     {item.location || 'Zone B Risers'}
                   </td>
                   <td className="py-2.5 px-2 whitespace-nowrap text-[#76777d]">
-                    Cutoff: {item.cutoffLatencySec || 4.8}s
+                    Output confirmation: {item.cutoffLatencySec != null ? item.cutoffLatencySec.toFixed(1) : '—'}s
                   </td>
                   <td className="py-2.5 px-2 whitespace-nowrap text-[#0b1c30]">
                     Wasted: {item.waterWastedL} L
@@ -62,10 +63,6 @@ export const RecentIncidentsTable: React.FC = () => {
         </div>
       </div>
 
-      <div className="pt-3 mt-4 border-t border-[#e5eeff] flex items-center justify-between text-[#76777d] text-xs">
-        <span>All automated shutoffs executed within safety threshold (&lt;5s).</span>
-        <span className="font-semibold text-[#069669]">Safety certified</span>
-      </div>
     </section>
   );
 };

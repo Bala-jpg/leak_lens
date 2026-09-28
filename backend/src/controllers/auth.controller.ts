@@ -49,11 +49,16 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
       status: 'success',
       data: {
         user,
+        accessToken,
+        refreshToken,
         tokens: {
           accessToken,
           refreshToken,
         },
       },
+      user,
+      accessToken,
+      refreshToken,
     });
   } catch (error) {
     next(error);
@@ -95,11 +100,16 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       status: 'success',
       data: {
         user: userProfile,
+        accessToken,
+        refreshToken,
         tokens: {
           accessToken,
           refreshToken,
         },
       },
+      user: userProfile,
+      accessToken,
+      refreshToken,
     });
   } catch (error) {
     next(error);
@@ -126,6 +136,7 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
       data: {
         accessToken: newAccessToken,
       },
+      accessToken: newAccessToken,
     });
   } catch (error) {
     return res.status(401).json({
@@ -150,13 +161,42 @@ export const getMe = async (req: AuthenticatedRequest, res: Response, next: Next
       });
     }
 
+    const user = result.rows[0];
+
     return res.status(200).json({
       status: 'success',
       data: {
-        user: result.rows[0],
+        user,
       },
+      user,
     });
   } catch (error) {
     next(error);
   }
+};
+
+export const updateMe = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const { name, email } = z.object({ name: z.string().trim().min(2), email: z.email().trim().toLowerCase() }).parse(req.body);
+    const result = await pool.query('UPDATE users SET name = $1, email = $2 WHERE id = $3 RETURNING id, name, email, created_at', [name, email, req.user?.userId]);
+    if (!result.rows.length) return res.status(404).json({ status: 'error', message: 'User not found.' });
+    return res.json({ status: 'success', data: { user: result.rows[0] } });
+  } catch (error) {
+    if ((error as { code?: string }).code === '23505') {
+      return res.status(409).json({ status: 'error', message: 'Email address is already in use.' });
+    }
+    next(error);
+  }
+};
+
+export const changePassword = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const { currentPassword, newPassword } = z.object({ currentPassword: z.string(), newPassword: z.string().min(8) }).parse(req.body);
+    const result = await pool.query('SELECT password_hash FROM users WHERE id = $1', [req.user?.userId]);
+    if (!result.rows.length || !await verifyPassword(currentPassword, result.rows[0].password_hash)) {
+      return res.status(401).json({ status: 'error', message: 'Current password is incorrect.' });
+    }
+    await pool.query('UPDATE users SET password_hash = $1 WHERE id = $2', [await hashPassword(newPassword), req.user?.userId]);
+    return res.json({ status: 'success' });
+  } catch (error) { next(error); }
 };

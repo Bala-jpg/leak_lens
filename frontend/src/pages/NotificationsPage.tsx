@@ -1,3 +1,4 @@
+import { Icon } from '../components/Icon';
 import React, { useState } from 'react';
 import { useNotifications } from '../context/NotificationContext';
 import { useDevices } from '../context/DeviceContext';
@@ -20,15 +21,15 @@ export const NotificationsPage: React.FC = () => {
   const getIcon = (type: NotificationItem['type']) => {
     switch (type) {
       case 'LEAK_DETECTED':
-        return <span className="material-symbols-outlined text-red-600 text-[20px]">warning</span>;
+        return <Icon name="warning" className="text-red-600 text-[20px]" />;
       case 'VALVE_CUTOFF':
-        return <span className="material-symbols-outlined text-amber-600 text-[20px]">power_settings_new</span>;
+        return <Icon name="power_settings_new" className="text-amber-600 text-[20px]" />;
       case 'DEVICE_OFFLINE':
-        return <span className="material-symbols-outlined text-slate-600 text-[20px]">cloud_off</span>;
+        return <Icon name="cloud_off" className="text-slate-600 text-[20px]" />;
       case 'LEAK_RESOLVED':
-        return <span className="material-symbols-outlined text-emerald-600 text-[20px]">check_circle</span>;
+        return <Icon name="check_circle" className="text-emerald-600 text-[20px]" />;
       default:
-        return <span className="material-symbols-outlined text-sky-600 text-[20px]">info</span>;
+        return <Icon name="info" className="text-sky-600 text-[20px]" />;
     }
   };
 
